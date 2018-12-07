@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.shuangying.core.db.mapper.RoomUserMapper">
+
+    <resultMap id="BaseResultMap" type="com.shuangying.core.db.model.RoomUser">
+        <id column="id" property="id" jdbcType="BIGINT" ></id>
+        <result column="domain_id" property="domainId" jdbcType="BIGINT"></result>
+        <result column="room_id" property="roomId" jdbcType="BIGINT"></result>
+        <result column="user_id" property="userId" jdbcType="BIGINT"></result>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"></result>
+    </resultMap>
+
+    <sql id="select_sql">
+        SELECT id,domain_id,room_id,user_id,create_time
+    </sql>
+
+    <insert id="insert" parameterType="com.shuangying.core.db.model.RoomUser">
+        insert into tb_room_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="domainId != null">
+                domain_id,
+            </if>
+            <if test="roomId != null">
+                room_id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            create_time
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="domainId != null">
+                #{domainId,jdbcType=BIGINT},
+            </if>
+            <if test="roomId != null">
+                #{roomId,jdbcType=BIGINT},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=BIGINT},
+            </if>
+            sysdate(),
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.shuangying.core.db.model.RoomUser">
+        update tb_room_user
+        <set>
+            <if test="domainId != null">
+                domain_id = #{domainId,jdbcType=BIGINT},
+            </if>
+            <if test="roomId != null">
+                room_id = #{roomId,jdbcType=BIGINT},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=BIGINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+</mapper>

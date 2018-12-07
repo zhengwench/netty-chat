@@ -1,0 +1,6 @@
+/*.iml
+/.idea
+/chat-console/*.iml
+/chat-core/*.iml
+/chat-server/*.iml
+/chat-web/*.iml

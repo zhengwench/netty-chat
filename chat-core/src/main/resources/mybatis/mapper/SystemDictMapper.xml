@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.shuangying.core.db.mapper.SystemDictMapper">
+
+    <resultMap id="BaseResultMap" type="com.shuangying.core.db.model.SystemDict">
+        <id column="id" property="id" jdbcType="BIGINT" ></id>
+        <result column="domain_id" property="domainId" jdbcType="BIGINT"></result>
+        <result column="sys_group" property="sysGroup" jdbcType="VARCHAR"></result>
+        <result column="sys_key" property="sysKey" jdbcType="VARCHAR"></result>
+        <result column="sys_value" property="sysValue" jdbcType="VARCHAR"></result>
+        <result column="sys_type" property="sysType" jdbcType="INTEGER"></result>
+        <result column="remark" property="remark" jdbcType="VARCHAR"></result>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"></result>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"></result>
+        <result column="del_flag" property="delFlag" jdbcType="INTEGER"></result>
+    </resultMap>
+
+    <sql id="select_sql">
+        SELECT id,domain_id,sys_group,sys_key,sys_value,sys_type,remark,create_time,update_time,del_flag
+    </sql>
+
+    <insert id="insert" parameterType="com.shuangying.core.db.model.SystemDict">
+        insert into tb_system_dict
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="domainId != null and domainId gt 0">
+                domain_id,
+            </if>
+            <if test="sysGroup != null and sysGroup !=''">
+                sys_group,
+            </if>
+            <if test="sysKey != null and sysKey != ''">
+                sys_key,
+            </if>
+            <if test="sysValue != null and sysValue != ''">
+                sys_value,
+            </if>
+            <if test="sysType != null">
+                sys_type,
+            </if>
+            <if test="remark != null and remark != ''">
+                remark,
+            </if>
+            create_time,
+            del_flag
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="domainId != null and domainId gt 0">
+                #{domainId,jdbcType=BIGINT},
+            </if>
+            <if test="sysGroup != null and sysGroup != ''">
+                #{sysGroup,jdbcType=VARCHAR},
+            </if>
+            <if test="sysKey != null and sysKey != ''">
+                #{sysKey,jdbcType=VARCHAR},
+            </if>
+            <if test="sysValue != null and sysValue != ''">
+                #{sysValue,jdbcType=VARCHAR},
+            </if>
+            <if test="sysType != null">
+                #{sysType,jdbcType=INTEGER},
+            </if>
+            <if test="remark != null and remark != ''">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+            sysdate(),
+            1
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.shuangying.core.db.model.SystemDict">
+        update tb_system_dict
+        <set>
+            <if test="domainId != null and domainId gt 0">
+                domain_id = #{domainId,jdbcType=BIGINT},
+            </if>
+            <if test="sysGroup != null and sysGroup != ''">
+                sys_group = #{sysGroup,jdbcType=VARCHAR},
+            </if>
+            <if test="sysKey != null and sysKey != ''">
+                sys_key = #{sysKey,jdbcType=VARCHAR},
+            </if>
+            <if test="sysValue != null and sysValue != ''">
+                sys_value = #{sysValue,jdbcType=VARCHAR},
+            </if>
+            <if test="sysType != null">
+                sys_type = #{sysType,jdbcType=INTEGER},
+            </if>
+            <if test="remark != null and remark != ''">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="delFlag != null">
+                del_flag = #{delFlag,jdbcType=INTEGER},
+            </if>
+            update_time = sysdate(),
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <update id="remove">
+        update tb_system_dict set del_flag = -1 where id = #{id} and domain_id = #{domainId}
+    </update>
+
+    <select id="queryById" resultMap="BaseResultMap">
+        <include refid="select_sql"/>
+        from tb_system_dict where id = #{id} and domain_id = #{domainId}
+    </select>
+
+    <select id="queryByKey" resultMap="BaseResultMap">
+        <include refid="select_sql"/>
+        from tb_system_dict where domain_id = #{domainId} and sys_group = #{group} and sys_key = #{key} and del_flag = 1 LIMIT 1
+    </select>
+    
+    <select id="queryGroupAllByDomainId" resultMap="BaseResultMap">
+        <include refid="select_sql"/>
+        from tb_system_dict where domain_id = #{domainId} and sys_group = #{group} and del_flag = 1
+    </select>
+    
+    <select id="queryGroupAllPageList" resultMap="BaseResultMap">
+        <include refid="select_sql"/> from tb_system_dict
+        <where>
+            del_flag = 1
+            <if test="query.domainId != null and query.domainId > 0">
+                and domain_id = #{query.domainId}
+            </if>
+            <if test="query.sysGroup != null and query.sysGroup != ''">
+                and sys_group = #{query.sysGroup}
+            </if>
+            <if test="query.sysKey != null and query.sysKey != ''">
+                and sys_key = #{query.sysKey}
+            </if>
+            <if test="query.sysType != null and query.sysType > 0">
+                and sys_type = #{query.sysType}
+            </if>
+        </where>
+        order by id desc LIMIT #{query.startRow,jdbcType=INTEGER}, #{query.pageSize,jdbcType=INTEGER}
+    </select>
+
+    <select id="queryGroupAllPageCount" resultType="java.lang.Integer">
+        select count(*) from tb_system_dict
+        <where>
+            del_flag = 1
+            <if test="query.domainId != null and query.domainId > 0">
+                and domain_id = #{query.domainId}
+            </if>
+            <if test="query.sysGroup != null and query.sysGroup != ''">
+                and sys_group = #{query.sysGroup}
+            </if>
+            <if test="query.sysKey != null and query.sysKey != ''">
+                and sys_key = #{query.sysKey}
+            </if>
+            <if test="query.sysType != null and query.sysType > 0">
+                and sys_type = #{query.sysType}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryGroupKey" resultMap="BaseResultMap">
+        <include refid="select_sql"/> from tb_system_dict where domain_id = #{domainId} and sys_group = #{sysGroup} and sys_key = #{sysKey}
+    </select>
+</mapper>

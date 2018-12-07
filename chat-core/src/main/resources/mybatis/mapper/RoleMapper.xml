@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.shuangying.core.db.mapper.RoleMapper">
+
+    <resultMap id="BaseResultMap" type="com.shuangying.core.db.model.Role">
+        <id column="id" property="id" jdbcType="BIGINT" ></id>
+        <id column="domain_id" property="domainId" jdbcType="BIGINT" ></id>
+        <result column="role_name" property="roleName" jdbcType="VARCHAR"></result>
+        <result column="role_icon" property="roleIcon" jdbcType="VARCHAR"></result>
+        <result column="perm_ids" property="permIds" jdbcType="VARCHAR"></result>
+        <result column="remark" property="remark" jdbcType="VARCHAR"></result>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"></result>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"></result>
+        <result column="del_flag" property="delFlag" jdbcType="INTEGER"></result>
+    </resultMap>
+
+    <resultMap id="BasePermissionResultMap" type="com.shuangying.core.db.model.Permission">
+        <id column="id" property="id" jdbcType="BIGINT" ></id>
+        <result column="parent_id" property="parentId" jdbcType="BIGINT"></result>
+        <result column="type" property="type" jdbcType="INTEGER"></result>
+        <result column="name" property="name" jdbcType="VARCHAR"></result>
+        <result column="url" property="url" jdbcType="VARCHAR"></result>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"></result>
+    </resultMap>
+
+    <sql id="select_sql">
+        SELECT id,domain_id,role_name,role_icon,perm_ids,remark,create_time,update_time,del_flag
+    </sql>
+
+    <insert id="insert" parameterType="com.shuangying.core.db.model.Role" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_role
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="domainId != null">
+                domain_id,
+            </if>
+            <if test="roleName != null">
+                role_name,
+            </if>
+            <if test="roleIcon != null">
+                role_icon,
+            </if>
+            <if test="permIds != null">
+                perm_ids,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+            create_time,
+            del_flag
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="domainId != null">
+                #{domainId,jdbcType=BIGINT},
+            </if>
+            <if test="roleName != null">
+                #{roleName,jdbcType=VARCHAR},
+            </if>
+            <if test="roleIcon != null">
+                #{roleIcon,jdbcType=VARCHAR},
+            </if>
+            <if test="permIds != null">
+                #{permIds,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+            sysdate(),
+            1
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.shuangying.core.db.model.Role">
+        update sys_role
+        <set>
+            <if test="domainId != null">
+                domain_id = #{domainId,jdbcType=BIGINT},
+            </if>
+            <if test="roleName != null">
+                role_name = #{roleName,jdbcType=VARCHAR},
+            </if>
+            <if test="roleIcon != null">
+                role_icon = #{roleIcon,jdbcType=VARCHAR},
+            </if>
+            <if test="permIds != null">
+                perm_ids = #{permIds,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="delFlag != null">
+                del_flag = #{delFlag,jdbcType=INTEGER},
+            </if>
+            update_time = sysdate(),
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <select id="queryById" resultMap="BaseResultMap">
+        <include refid="select_sql"/>
+        from sys_role where id = #{id}
+    </select>
+
+    <select id="queryByIdAndDomainId" resultMap="BaseResultMap">
+        <include refid="select_sql"/>
+        from sys_role where id = #{id} and domain_id=#{domainId}
+    </select>
+
+    <select id="queryPageList" resultMap="BaseResultMap">
+        <include refid="select_sql"/> from sys_role
+        <where>
+            del_flag = 1
+            <if test="query.domainId!=null and query.domainId>0">
+                and domain_id=#{query.domainId}
+            </if>
+        </where>
+        order by id desc LIMIT #{query.startRow,jdbcType=INTEGER}, #{query.pageSize,jdbcType=INTEGER}
+    </select>
+
+    <select id="queryPageCount" resultType="java.lang.Integer">
+        select count(*) from sys_role
+        <where>
+            del_flag = 1
+            <if test="query.domainId!=null and query.domainId>0">
+                and domain_id=#{query.domainId}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryList" resultMap="BaseResultMap">
+        <include refid="select_sql"/> from sys_role where domain_id = #{domainId} and del_flag = 1
+    </select>
+
+    <update id="remove">
+        update sys_role set del_flag = -1 where id = #{id}
+    </update>
+
+
+</mapper>

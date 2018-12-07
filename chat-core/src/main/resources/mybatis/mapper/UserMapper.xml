@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.shuangying.core.db.mapper.UserMapper">
+
+    <resultMap id="BaseResultMap" type="com.shuangying.core.db.model.User">
+        <id column="id" property="id" jdbcType="BIGINT" ></id>
+        <result column="domain_id" property="domainId" jdbcType="BIGINT"></result>
+        <result column="user_name" property="userName" jdbcType="VARCHAR"></result>
+        <result column="password" property="password" jdbcType="VARCHAR"></result>
+        <result column="salt" property="salt" jdbcType="VARCHAR"></result>
+        <result column="room_id" property="roomId" jdbcType="BIGINT"></result>
+        <result column="icon" property="icon" jdbcType="VARCHAR"></result>
+        <result column="role_id" property="roleId" jdbcType="BIGINT"></result>
+        <result column="login_ip" property="loginIp" jdbcType="VARCHAR"></result>
+        <result column="status" property="status" jdbcType="INTEGER"></result>
+        <result column="remark" property="remark" jdbcType="VARCHAR"></result>
+        <result column="sys_token" property="sysToken" jdbcType="VARCHAR"></result>
+        <result column="token" property="token" jdbcType="VARCHAR"></result>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"></result>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"></result>
+        <result column="del_flag" property="delFlag" jdbcType="INTEGER"></result>
+    </resultMap>
+
+    <resultMap id="DtoBaseResultMap" type="com.shuangying.core.db.model.dto.UserDto">
+        <id column="id" property="id" jdbcType="BIGINT" ></id>
+        <result column="domain_id" property="domainId" jdbcType="BIGINT"></result>
+        <result column="user_name" property="userName" jdbcType="VARCHAR"></result>
+        <result column="password" property="password" jdbcType="VARCHAR"></result>
+        <result column="salt" property="salt" jdbcType="VARCHAR"></result>
+        <result column="role_id" property="roleId" jdbcType="BIGINT"></result>
+        <result column="login_ip" property="loginIp" jdbcType="VARCHAR"></result>
+        <result column="status" property="status" jdbcType="INTEGER"></result>
+        <result column="remark" property="remark" jdbcType="VARCHAR"></result>
+        <result column="token" property="token" jdbcType="VARCHAR"></result>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"></result>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"></result>
+        <result column="del_flag" property="delFlag" jdbcType="INTEGER"></result>
+    </resultMap>
+
+    <sql id="select_sql">
+        SELECT id,domain_id,user_name,password,salt,room_id,icon,role_id,login_ip,status,remark,sys_token,token,create_time,update_time,del_flag
+    </sql>
+
+    <insert id="insert" parameterType="com.shuangying.core.db.model.User">
+        insert into sys_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="domainId != null">
+                domain_id,
+            </if>
+            <if test="userName != null">
+                user_name,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="salt != null">
+                salt,
+            </if>
+            <if test="roomId != null">
+                room_id,
+            </if>
+            <if test="icon != null">
+                icon,
+            </if>
+            <if test="roleId != null">
+                role_id,
+            </if>
+            <if test="loginIp != null">
+                login_ip,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+            <if test="sysToken != null">
+                sys_token,
+            </if>
+            <if test="token != null">
+                token,
+            </if>
+            create_time,
+            del_flag
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="domainId != null">
+                #{domainId,jdbcType=BIGINT},
+            </if>
+            <if test="userName != null">
+                #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="salt != null">
+                #{salt,jdbcType=VARCHAR},
+            </if>
+            <if test="roomId != null">
+                #{roomId,jdbcType=BIGINT},
+            </if>
+            <if test="icon != null">
+                #{icon,jdbcType=VARCHAR},
+            </if>
+            <if test="roleId != null">
+                #{roleId,jdbcType=BIGINT},
+            </if>
+            <if test="loginIp != null">
+                #{loginIp,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="sysToken != null">
+                #{sysToken,jdbcType=VARCHAR},
+            </if>
+            <if test="token != null">
+                #{token,jdbcType=VARCHAR},
+            </if>
+            sysdate(),
+            1
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.shuangying.core.db.model.User">
+        update sys_user
+        <set>
+            <if test="domainId != null">
+                domain_id = #{domainId,jdbcType=BIGINT},
+            </if>
+            <if test="userName != null">
+                user_name = #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="salt != null">
+                salt = #{salt,jdbcType=VARCHAR},
+            </if>
+            <if test="roomId != null">
+                role_id = #{roomId,jdbcType=BIGINT},
+            </if>
+            <if test="icon != null">
+                icon = #{icon,jdbcType=VARCHAR},
+            </if>
+            <if test="roleId != null">
+                role_id = #{roleId,jdbcType=BIGINT},
+            </if>
+            <if test="loginIp != null">
+                login_ip = #{loginIp,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="sysToken != null">
+                sys_token = #{sysToken,jdbcType=VARCHAR},
+            </if>
+            <if test="token != null">
+                token = #{token,jdbcType=VARCHAR},
+            </if>
+            <if test="delFlag != null">
+                del_flag = #{delFlag,jdbcType=INTEGER},
+            </if>
+            update_time = sysdate(),
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <select id="queryById" resultMap="BaseResultMap">
+        <include refid="select_sql"/>
+        from sys_user where id = #{id}
+    </select>
+
+    <select id="queryByDomainIdAndId" resultMap="BaseResultMap">
+        <include refid="select_sql"/>
+        from sys_user where id = #{id} and domain_id = #{domainId}
+    </select>
+
+    <select id="queryPageList" resultMap="BaseResultMap">
+        <include refid="select_sql"/> from sys_user
+        <where>
+            del_flag = 1
+
+            <if test="query.domainId!=null and query.domainId>0">
+                and domain_id=#{query.domainId}
+            </if>
+            <if test="query.roleId!=null and query.roleId>0">
+                and role_id=#{query.roleId}
+            </if>
+            <if test="query.roomId!=null and query.roomId>0">
+                and room_id=#{query.roomId}
+            </if>
+            <if test="query.userName!=null and query.userName!=''">
+                and user_name=#{query.userName}
+            </if>
+        </where>
+        order by id desc LIMIT #{query.startRow,jdbcType=INTEGER}, #{query.pageSize,jdbcType=INTEGER}
+    </select>
+
+    <select id="queryDtoPageList" resultType="com.shuangying.core.db.model.dto.UserDto">
+        select su.id id,su.user_name userName,su.password password,su.room_id roomId,tr.room_name roomName,su.role_id roleId,sr.role_name roleName,
+        su.login_ip loginIp,su.status status,su.remark remark,su.create_time createTime,su.update_time updateTime
+        from sys_user su left join sys_role sr on su.role_id = sr.id left join tb_room tr on su.room_id = tr.id
+        <where>
+            su.del_flag = 1
+            <if test="query.domainId!=null and query.domainId>0">
+                and su.domain_id=#{query.domainId}
+            </if>
+            <if test="query.roleId!=null and query.roleId>0">
+                and su.role_id=#{query.roleId}
+            </if>
+            <if test="query.roomId!=null and query.roomId>0">
+                and su.room_id=#{query.roomId}
+            </if>
+            <if test="query.userName!=null and query.userName!=''">
+                and su.user_name=#{query.userName}
+            </if>
+        </where>
+        order by su.id desc LIMIT #{query.startRow,jdbcType=INTEGER}, #{query.pageSize,jdbcType=INTEGER}
+    </select>
+
+    <select id="queryPageCount" resultType="java.lang.Integer">
+        select count(*) from sys_user
+        <where>
+            del_flag = 1
+
+            <if test="query.domainId!=null and query.domainId>0">
+                and domain_id=#{query.domainId}
+            </if>
+            <if test="query.roleId!=null and query.roleId>0">
+                and role_id=#{query.roleId}
+            </if>
+            <if test="query.roomId!=null and query.roomId>0">
+                and room_id=#{query.roomId}
+            </if>
+            <if test="query.userName!=null and query.userName!=''">
+                and user_name=#{query.userName}
+            </if>
+        </where>
+    </select>
+    
+    <select id="queryByUserName" resultMap="BaseResultMap">
+        <include refid="select_sql"/> from sys_user
+        where user_name = #{userName} and domain_id=#{domainId} and del_flag = 1
+    </select>
+    
+    <update id="remove">
+        update sys_user set del_flag = -1 where id=#{id}
+    </update>
+
+    <select id="queryByDomainIdAndToken" resultMap="BaseResultMap">
+        <include refid="select_sql"/> from sys_user
+        where domain_id=#{domainId} and token=#{token} and del_flag = 1
+    </select>
+
+    <select id="queryByDomainIdAndSysToken" resultMap="BaseResultMap">
+        <include refid="select_sql"/> from sys_user
+        where domain_id=#{domainId} and sys_token=#{sysToken} and del_flag = 1
+    </select>
+
+    <update id="updateLoginIp">
+        update sys_user set login_ip = #{loginIp} where id = #{id}
+    </update>
+
+    <select id="queryOnlineList" resultType="com.shuangying.core.db.model.dto.UserOnlineDto">
+        select su.id id,su.user_name userName,su.icon userIcon,sr.role_icon roleIcon from sys_user su left join sys_role sr on su.role_id = sr.id
+        where su.domain_id = #{domainId} and su.room_id = #{roomId}
+        <if test="count!=null and count>0">
+            LIMIT #{count,jdbcType=INTEGER}
+        </if>
+    </select>
+
+    <update id="removeToken">
+        update sys_user set token = null where id = #{id}
+    </update>
+
+    <update id="removeSysToken">
+        update sys_user set sys_token = null where id = #{id}
+    </update>
+
+    <select id="queryUserInfo" resultType="com.shuangying.core.db.model.dto.UserInfoDto">
+        select su.id id,su.icon icon,su.user_name userName,su.role_id roleId,sr.role_name roleName,su.login_ip loginIp,su.create_time createTime
+        from sys_user su left join sys_role sr on su.role_id = sr.id where su.domain_id=#{domainId} and su.token=#{token} and su.del_flag = 1
+    </select>
+</mapper>

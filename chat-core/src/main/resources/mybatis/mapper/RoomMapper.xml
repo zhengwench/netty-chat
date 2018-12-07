@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.shuangying.core.db.mapper.RoomMapper">
+
+    <resultMap id="BaseResultMap" type="com.shuangying.core.db.model.Room">
+        <id column="id" property="id" jdbcType="BIGINT" ></id>
+        <result column="domain_id" property="domainId" jdbcType="BIGINT"></result>
+        <result column="room_name" property="roomName" jdbcType="VARCHAR"></result>
+        <result column="room_type" property="roomType" jdbcType="INTEGER"></result>
+        <result column="room_logo" property="roomLogo" jdbcType="VARCHAR"></result>
+        <result column="room_pc_bg" property="roomPcBg" jdbcType="VARCHAR"></result>
+        <result column="room_mobile_bg" property="roomMobileBg" jdbcType="VARCHAR"></result>
+        <result column="forbid_status" property="forbidStatus" jdbcType="INTEGER"></result>
+        <result column="open_room" property="openRoom" jdbcType="INTEGER"></result>
+        <result column="remark" property="remark" jdbcType="VARCHAR"></result>
+        <result column="websocket_url" property="websocketUrl" jdbcType="VARCHAR"></result>
+        <result column="http_url" property="httpUrl" jdbcType="VARCHAR"></result>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"></result>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"></result>
+        <result column="del_flag" property="delFlag" jdbcType="INTEGER"></result>
+    </resultMap>
+
+    <sql id="select_sql">
+        SELECT id,domain_id,room_name,room_type,room_logo,room_pc_bg,room_mobile_bg,forbid_status,open_room,remark,websocket_url,http_url,
+        create_time,update_time,del_flag
+    </sql>
+
+    <insert id="insert" parameterType="com.shuangying.core.db.model.Room" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_room
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="domainId != null">
+                domain_id,
+            </if>
+            <if test="roomName != null">
+                room_name,
+            </if>
+            <if test="roomType != null">
+                room_type,
+            </if>
+            <if test="roomLogo != null">
+                room_logo,
+            </if>
+            <if test="roomPcBg != null">
+                room_pc_bg,
+            </if>
+            <if test="roomMobileBg != null">
+                room_mobile_bg,
+            </if>
+            <if test="forbidStatus != null">
+                forbid_status,
+            </if>
+            <if test="openRoom != null">
+                open_room,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+            <if test="websocketUrl != null">
+                websocket_url,
+            </if>
+            <if test="httpUrl != null">
+                http_url,
+            </if>
+            create_time,
+            del_flag
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="domainId != null">
+                #{domainId,jdbcType=BIGINT},
+            </if>
+            <if test="roomName != null">
+                #{roomName,jdbcType=VARCHAR},
+            </if>
+            <if test="roomType != null">
+                #{roomType,jdbcType=INTEGER},
+            </if>
+            <if test="roomLogo != null">
+                #{roomLogo,jdbcType=VARCHAR},
+            </if>
+            <if test="roomPcBg != null">
+                #{roomPcBg,jdbcType=VARCHAR},
+            </if>
+            <if test="roomMobileBg != null">
+                #{roomMobileBg,jdbcType=VARCHAR},
+            </if>
+            <if test="forbidStatus != null">
+                #{forbidStatus,jdbcType=INTEGER},
+            </if>
+            <if test="openRoom != null">
+                #{openRoom,jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="websocketUrl != null">
+                #{websocketUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="httpUrl != null">
+                #{httpUrl,jdbcType=VARCHAR},
+            </if>
+            sysdate(),
+            1
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.shuangying.core.db.model.Redbag">
+        update tb_room
+        <set>
+            <if test="domainId != null">
+                domain_id = #{domainId,jdbcType=BIGINT},
+            </if>
+            <if test="roomName != null">
+                room_name = #{roomName,jdbcType=VARCHAR},
+            </if>
+            <if test="roomType != null">
+                room_type = #{roomType,jdbcType=INTEGER},
+            </if>
+            <if test="roomLogo != null">
+                room_logo = #{roomLogo,jdbcType=VARCHAR},
+            </if>
+            <if test="roomPcBg != null">
+                room_pc_bg = #{roomPcBg,jdbcType=VARCHAR},
+            </if>
+            <if test="roomMobileBg != null">
+                room_mobile_bg = #{roomMobileBg,jdbcType=VARCHAR},
+            </if>
+            <if test="forbidStatus != null">
+                forbid_status = #{forbidStatus,jdbcType=INTEGER},
+            </if>
+            <if test="openRoom != null">
+                open_room = #{openRoom,jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="websocketUrl != null">
+                websocket_url = #{websocketUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="httpUrl != null">
+                http_url = #{httpUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="delFlag != null">
+                del_flag = #{delFlag,jdbcType=INTEGER},
+            </if>
+            update_time = sysdate(),
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <select id="queryById" resultMap="BaseResultMap">
+        <include refid="select_sql"/>
+        from tb_room where id = #{id} and del_flag = 1
+    </select>
+
+    <select id="queryByIdAndDomainId" resultMap="BaseResultMap">
+        <include refid="select_sql"/>
+        from tb_room where id = #{id} and domain_id=#{domainId} and del_flag = 1
+    </select>
+
+    <select id="queryPageCount" resultType="java.lang.Integer">
+        select count(*) from tb_room
+        <where>
+            del_flag = 1
+            <if test="query.domainId!=null and query.domainId>0">
+                and domain_id=#{query.domainId}
+            </if>
+            <if test="query.roomName!=null and query.roomName!=''">
+                and room_name like "%"#{query.roomName}"%"
+            </if>
+            <if test="query.openRoom!=null">
+                and open_room <![CDATA[ = ]]> #{query.openRoom}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryPageList" resultMap="BaseResultMap">
+        <include refid="select_sql"/> from tb_room
+        <where>
+            del_flag = 1
+            <if test="query.domainId!=null and query.domainId>0">
+                and domain_id=#{query.domainId}
+            </if>
+            <if test="query.roomName!=null and query.roomName!=''">
+                and room_name like "%"#{query.roomName}"%"
+            </if>
+            <if test="query.openRoom!=null">
+                and open_room <![CDATA[ = ]]> #{query.openRoom}
+            </if>
+        </where>
+        LIMIT #{query.startRow,jdbcType=INTEGER}, #{query.pageSize,jdbcType=INTEGER}
+    </select>
+
+    <select id="queryList" resultMap="BaseResultMap">
+        <include refid="select_sql"/> from tb_room where domain_id=#{domainId} and del_flag = 1
+    </select>
+
+    <select id="queryDefaultRoom" resultMap="BaseResultMap">
+        <include refid="select_sql"/> from tb_room where domain_id=#{domainId} and room_type = 1 and del_flag = 1 LIMIT 1
+    </select>
+
+    <update id="remove">
+        update tb_room set del_flag = -1 where id = #{id}
+    </update>
+</mapper>

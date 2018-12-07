@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.shuangying.core.db.mapper.UserRobotMapper">
+    <resultMap id="BaseResultMap" type="com.shuangying.core.db.model.UserRobot">
+        <id column="id" property="id" jdbcType="BIGINT" ></id>
+        <result column="domain_id" property="domainId" jdbcType="BIGINT"></result>
+        <result column="user_name" property="userName" jdbcType="VARCHAR"></result>
+        <result column="room_id" property="roomId" jdbcType="BIGINT"></result>
+        <result column="icon" property="icon" jdbcType="VARCHAR"></result>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"></result>
+    </resultMap>
+
+    <sql id="select_sql">
+        SELECT id,domain_id,user_name,room_id,icon,create_time
+    </sql>
+
+    <insert id="insert" parameterType="com.shuangying.core.db.model.UserRobot">
+        insert into tb_user_robot
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="domainId != null">
+                domain_id,
+            </if>
+            <if test="userName != null">
+                user_name,
+            </if>
+            <if test="roomId != null">
+                room_id,
+            </if>
+            <if test="icon != null">
+                icon,
+            </if>
+            create_time
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="domainId != null">
+                #{domainId,jdbcType=BIGINT},
+            </if>
+            <if test="userName != null">
+                #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="roomId != null">
+                #{roomId,jdbcType=BIGINT},
+            </if>
+            <if test="icon != null">
+                #{icon,jdbcType=VARCHAR},
+            </if>
+            sysdate()
+        </trim>
+    </insert>
+
+    <insert id="insertBatch" parameterType="java.util.List">
+        insert into tb_user_robot (domain_id,user_name,icon,room_id,create_time)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.domainId,jdbcType=BIGINT}, #{item.userName,jdbcType=VARCHAR},#{item.icon,jdbcType=VARCHAR},#{item.roomId,jdbcType=BIGINT},sysdate())
+        </foreach>
+    </insert>
+
+    <delete id="delete">
+        delete from tb_user_robot where id = #{id}
+    </delete>
+
+    <delete id="deleteBatch">
+        delete from tb_user_robot where id in
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        and domain_id = #{domainId}
+    </delete>
+
+    <select id="queryPageList" resultType="com.shuangying.core.db.model.dto.UserRobotDto">
+        select ur.id,ur.domain_id domainId,ur.user_name userName,ur.room_id roomId,ur.icon icon,tr.room_name roomName,ur.create_time createTime
+        from tb_user_robot ur left join tb_room tr on ur.room_id = tr.id
+        <where>
+            <if test="query.domainId!=null and query.domainId>0">
+                and ur.domain_id=#{query.domainId}
+            </if>
+            <if test="query.roomId!=null and query.roomId>0">
+                and ur.room_id=#{query.roomId}
+            </if>
+        </where>
+        order by ur.id desc LIMIT #{query.startRow,jdbcType=INTEGER}, #{query.pageSize,jdbcType=INTEGER}
+    </select>
+
+    <select id="queryPageCount" resultType="java.lang.Integer">
+        select count(*) from tb_user_robot
+        <where>
+            <if test="query.domainId!=null and query.domainId>0">
+                and domain_id=#{query.domainId}
+            </if>
+            <if test="query.roomId!=null and query.roomId>0">
+                and room_id=#{query.roomId}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryList">
+        <include refid="select_sql"/> from tb_user_robot order by id desc
+        <if test="count!=null and count>0">
+            LIMIT #{count,jdbcType=INTEGER}
+        </if>
+    </select>
+
+    <select id="queryOnlineList" resultType="com.shuangying.core.db.model.dto.UserOnlineDto">
+        select user_name userName,icon userIcon from tb_user_robot
+        where domain_id = #{domainId} and room_id = #{roomId}
+        <if test="count!=null and count>0">
+            LIMIT #{count,jdbcType=INTEGER}
+        </if>
+    </select>
+</mapper>

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.shuangying.core.db.mapper.RedbagMapper">
+
+    <resultMap id="BaseResultMap" type="com.shuangying.core.db.model.Redbag">
+        <id column="id" property="id" jdbcType="BIGINT" ></id>
+        <id column="domain_id" property="domainId" jdbcType="BIGINT" ></id>
+        <result column="room_id" property="roomId" jdbcType="BIGINT"></result>
+        <result column="send_user_id" property="sendUserId" jdbcType="BIGINT"></result>
+        <result column="send_user_name" property="sendUserName" jdbcType="VARCHAR"></result>
+        <result column="send_user_icon" property="sendUserIcon" jdbcType="VARCHAR"></result>
+        <result column="amount" property="amount" jdbcType="DECIMAL"></result>
+        <result column="count" property="count" jdbcType="INTEGER"></result>
+        <result column="remark" property="remark" jdbcType="INTEGER"></result>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"></result>
+    </resultMap>
+
+    <sql id="select_sql">
+        SELECT id,domain_id,room_id,send_user_id,send_user_name,send_user_icon,amount,count,remark,create_time
+    </sql>
+
+    <insert id="insert" parameterType="com.shuangying.core.db.model.Redbag" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_redbag
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="domainId != null">
+                domain_id,
+            </if>
+            <if test="roomId != null">
+                room_id,
+            </if>
+            <if test="sendUserId != null">
+                send_user_id,
+            </if>
+            <if test="sendUserName != null">
+                send_user_name,
+            </if>
+            <if test="sendUserIcon != null">
+                send_user_icon,
+            </if>
+            <if test="amount != null">
+                amount,
+            </if>
+            <if test="count != null">
+                count,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+            create_time
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="domainId != null">
+                #{domainId,jdbcType=BIGINT},
+            </if>
+            <if test="roomId != null">
+                #{roomId,jdbcType=BIGINT},
+            </if>
+            <if test="sendUserId != null">
+                #{sendUserId,jdbcType=BIGINT},
+            </if>
+            <if test="sendUserName != null">
+                #{sendUserName,jdbcType=VARCHAR},
+            </if>
+            <if test="sendUserIcon != null">
+                #{sendUserIcon,jdbcType=VARCHAR},
+            </if>
+            <if test="amount != null">
+                #{amount,jdbcType=DECIMAL},
+            </if>
+            <if test="count != null">
+                #{count,jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+            sysdate(),
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.shuangying.core.db.model.Redbag">
+        update tb_redbag
+        <set>
+            <if test="domainId != null">
+                domain_id = #{domainId,jdbcType=BIGINT},
+            </if>
+            <if test="roomId != null">
+                room_id = #{roomId,jdbcType=BIGINT},
+            </if>
+            <if test="sendUserId != null">
+                send_user_id = #{sendUserId,jdbcType=BIGINT},
+            </if>
+            <if test="sendUserName != null">
+                send_user_name = #{sendUserName,jdbcType=VARCHAR},
+            </if>
+            <if test="sendUserIcon != null">
+                send_user_icon = #{sendUserIcon,jdbcType=VARCHAR},
+            </if>
+            <if test="amount != null">
+                amount = #{amount,jdbcType=DECIMAL},
+            </if>
+            <if test="count != null">
+                count = #{count,jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            update_time = sysdate(),
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    
+    <select id="queryPageCount" resultType="java.lang.Integer">
+        select count(*) from tb_redbag
+        <where>
+            <if test="query.domainId!=null and query.domainId>0">
+                and domain_id=#{query.domainId}
+            </if>
+            <if test="query.sendMemberName!=null and query.sendMemberName!=''">
+                and send_user_name like "%"#{query.sendMemberName}"%"
+            </if>
+            <if test="query.startTime!=null">
+                and create_time <![CDATA[ >= ]]> #{query.startTime}
+            </if>
+            <if test="query.endTime!=null">
+                and create_time <![CDATA[ < ]]> #{query.endTime}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryPageList" resultMap="BaseResultMap">
+        <include refid="select_sql"/> from tb_redbag
+        <where>
+            <if test="query.domainId!=null and query.domainId>0">
+                and domain_id=#{query.domainId}
+            </if>
+            <if test="query.sendMemberName!=null and query.sendMemberName!=''">
+                and send_user_name like "%"#{query.sendMemberName}"%"
+            </if>
+            <if test="query.startTime!=null">
+                and create_time <![CDATA[ >= ]]> #{query.startTime}
+            </if>
+            <if test="query.endTime!=null">
+                and create_time <![CDATA[ < ]]> #{query.endTime}
+            </if>
+        </where>
+        order by id desc LIMIT #{query.startRow,jdbcType=INTEGER}, #{query.pageSize,jdbcType=INTEGER}
+    </select>
+
+    <select id="queryById" resultMap="BaseResultMap">
+        <include refid="select_sql"/> from tb_redbag
+        where id = #{id}
+    </select>
+
+    <select id="queryByIdForLock" resultMap="BaseResultMap">
+        <include refid="select_sql"/> from tb_redbag
+        where id = #{id} for update
+    </select>
+</mapper>

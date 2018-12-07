@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.shuangying.core.db.mapper.BlackIpMapper">
+
+    <resultMap id="BaseResultMap" type="com.shuangying.core.db.model.BlackIp">
+        <id column="id" property="id" jdbcType="BIGINT" ></id>
+        <id column="domain_id" property="domainId" jdbcType="BIGINT" ></id>
+        <result column="ip" property="ip" jdbcType="VARCHAR"></result>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"></result>
+    </resultMap>
+
+    <sql id="select_sql">
+        SELECT id,domain_id,ip,create_time
+    </sql>
+
+    <insert id="insert" parameterType="com.shuangying.core.db.model.BlackIp">
+        insert into tb_black_ip
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="domainId != null">
+                domain_id,
+            </if>
+            <if test="ip != null">
+                ip,
+            </if>
+            create_time
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="domainId != null">
+                #{domainId,jdbcType=BIGINT},
+            </if>
+            <if test="ip != null">
+                #{ip,jdbcType=VARCHAR},
+            </if>
+            sysdate(),
+        </trim>
+    </insert>
+
+    <select id="queryById" resultMap="BaseResultMap">
+        <include refid="select_sql"/> from tb_black_ip where id = #{id}
+    </select>
+
+    <select id="queryByIdAndDomainId" resultMap="BaseResultMap">
+        <include refid="select_sql"/> from tb_black_ip where id = #{id} and domain_id=#{domainId}
+    </select>
+
+    <delete id="delete">
+        delete from tb_black_ip where id = #{id} and domain_id = #{domainId}
+    </delete>
+
+    <select id="queryPageCount" resultType="java.lang.Integer">
+        select count(*) from tb_black_ip
+        <where>
+            <if test="query.domainId!=null and query.domainId>0">
+                and domain_id=#{query.domainId}
+            </if>
+            <if test="query.ip!=null and query.ip!=''">
+                and ip like "%"#{query.ip}"%"
+            </if>
+        </where>
+    </select>
+
+    <select id="queryPageList" resultMap="BaseResultMap">
+        <include refid="select_sql"/> from tb_black_ip
+        <where>
+            <if test="query.domainId!=null and query.domainId>0">
+                and domain_id=#{query.domainId}
+            </if>
+            <if test="query.ip!=null and query.ip!=''">
+                and ip like "%"#{query.ip}"%"
+            </if>
+        </where>
+    </select>
+
+    <select id="queryByIp" resultMap="BaseResultMap">
+        <include refid="select_sql"/> from tb_black_ip
+        where domain_id = #{domainId} and ip = #{ip}
+    </select>
+</mapper>
