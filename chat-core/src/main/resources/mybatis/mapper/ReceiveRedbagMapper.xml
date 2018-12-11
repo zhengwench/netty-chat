@@ -4,9 +4,9 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 
-<mapper namespace="com.shuangying.core.db.mapper.ReceiveRedbagMapper">
+<mapper namespace="chat.core.db.mapper.ReceiveRedbagMapper">
 
-    <resultMap id="BaseResultMap" type="com.shuangying.core.db.model.ReceiveRedbag">
+    <resultMap id="BaseResultMap" type="chat.core.db.model.ReceiveRedbag">
         <id column="id" property="id" jdbcType="BIGINT" ></id>
         <result column="domain_id" property="domainId" jdbcType="BIGINT"></result>
         <result column="redbag_id" property="redbagId" jdbcType="BIGINT"></result>
@@ -26,7 +26,7 @@
         SELECT id,domain_id,redbag_id,receive_user_id,receive_user_name,send_user_id,send_user_name,send_user_icon,amount,status,remark,create_time,update_time
     </sql>
 
-    <insert id="insert" parameterType="com.shuangying.core.db.model.ReceiveRedbag">
+    <insert id="insert" parameterType="chat.core.db.model.ReceiveRedbag">
         insert into tb_receive_redbag
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="domainId != null">
@@ -96,7 +96,7 @@
         </trim>
     </insert>
 
-    <update id="update" parameterType="com.shuangying.core.db.model.ReceiveRedbag">
+    <update id="update" parameterType="chat.core.db.model.ReceiveRedbag">
         update tb_receive_redbag
         <set>
             <if test="domainId != null">

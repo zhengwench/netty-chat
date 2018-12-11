@@ -3,8 +3,8 @@
         "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.shuangying.core.db.mapper.UserRobotMapper">
-    <resultMap id="BaseResultMap" type="com.shuangying.core.db.model.UserRobot">
+<mapper namespace="chat.core.db.mapper.UserRobotMapper">
+    <resultMap id="BaseResultMap" type="chat.core.db.model.UserRobot">
         <id column="id" property="id" jdbcType="BIGINT" ></id>
         <result column="domain_id" property="domainId" jdbcType="BIGINT"></result>
         <result column="user_name" property="userName" jdbcType="VARCHAR"></result>
@@ -17,7 +17,7 @@
         SELECT id,domain_id,user_name,room_id,icon,create_time
     </sql>
 
-    <insert id="insert" parameterType="com.shuangying.core.db.model.UserRobot">
+    <insert id="insert" parameterType="chat.core.db.model.UserRobot">
         insert into tb_user_robot
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="domainId != null">
@@ -71,7 +71,7 @@
         and domain_id = #{domainId}
     </delete>
 
-    <select id="queryPageList" resultType="com.shuangying.core.db.model.dto.UserRobotDto">
+    <select id="queryPageList" resultType="chat.core.db.model.dto.UserRobotDto">
         select ur.id,ur.domain_id domainId,ur.user_name userName,ur.room_id roomId,ur.icon icon,tr.room_name roomName,ur.create_time createTime
         from tb_user_robot ur left join tb_room tr on ur.room_id = tr.id
         <where>
@@ -104,7 +104,7 @@
         </if>
     </select>
 
-    <select id="queryOnlineList" resultType="com.shuangying.core.db.model.dto.UserOnlineDto">
+    <select id="queryOnlineList" resultType="chat.core.db.model.dto.UserOnlineDto">
         select user_name userName,icon userIcon from tb_user_robot
         where domain_id = #{domainId} and room_id = #{roomId}
         <if test="count!=null and count>0">

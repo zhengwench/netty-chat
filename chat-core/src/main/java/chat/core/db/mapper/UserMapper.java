@@ -45,4 +45,6 @@ public interface UserMapper {
     int removeSysToken(@Param("id") Long id);
 
     UserInfoDto queryUserInfo(@Param("domainId") Long domainId, @Param("token") String token);
+
+    int queryByRoleId(@Param("roleId")Long roleId);
 }

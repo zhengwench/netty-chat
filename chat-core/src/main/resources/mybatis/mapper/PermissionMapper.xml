@@ -4,9 +4,9 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 
-<mapper namespace="com.shuangying.core.db.mapper.PermissionMapper">
+<mapper namespace="chat.core.db.mapper.PermissionMapper">
 
-    <resultMap id="BaseResultMap" type="com.shuangying.core.db.model.Permission">
+    <resultMap id="BaseResultMap" type="chat.core.db.model.Permission">
         <id column="id" property="id" jdbcType="BIGINT" ></id>
         <result column="parent_id" property="parentId" jdbcType="BIGINT"></result>
         <result column="type" property="type" jdbcType="INTEGER"></result>
@@ -17,7 +17,7 @@
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"></result>
     </resultMap>
 
-    <resultMap id="DtoBaseResultMap" type="com.shuangying.core.db.model.dto.PermissionRoleDto">
+    <resultMap id="DtoBaseResultMap" type="chat.core.db.model.dto.PermissionRoleDto">
         <id column="id" property="id" jdbcType="BIGINT" ></id>
         <result column="name" property="name" jdbcType="VARCHAR"></result>
         <result column="url" property="url" jdbcType="VARCHAR"></result>

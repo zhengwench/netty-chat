@@ -4,9 +4,9 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 
-<mapper namespace="com.shuangying.core.db.mapper.DomainConfigMapper">
+<mapper namespace="chat.core.db.mapper.DomainConfigMapper">
 
-    <resultMap id="BaseResultMap" type="com.shuangying.core.db.model.DomainConfig">
+    <resultMap id="BaseResultMap" type="chat.core.db.model.DomainConfig">
         <id column="id" property="id" jdbcType="BIGINT" ></id>
         <result column="parent_id" property="parentId" jdbcType="BIGINT"></result>
         <result column="domain_name" property="domainName" jdbcType="VARCHAR"></result>
@@ -27,7 +27,7 @@
         SELECT id,parent_id,domain_name,websocket_url,http_url,public_key,private_key,start_time,end_time,status,remarks,create_time,update_time,del_flag
     </sql>
 
-    <insert id="insert" parameterType="com.shuangying.core.db.model.DomainConfig" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insert" parameterType="chat.core.db.model.DomainConfig" useGeneratedKeys="true" keyProperty="id">
         insert into tb_domain_config
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="parentId != null">
@@ -99,7 +99,7 @@
         </trim>
     </insert>
 
-    <update id="update" parameterType="com.shuangying.core.db.model.DomainConfig">
+    <update id="update" parameterType="chat.core.db.model.DomainConfig">
         update tb_domain_config
         <set>
             <if test="parentId != null">

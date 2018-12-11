@@ -4,9 +4,9 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 
-<mapper namespace="com.shuangying.core.db.mapper.SystemDictMapper">
+<mapper namespace="chat.core.db.mapper.SystemDictMapper">
 
-    <resultMap id="BaseResultMap" type="com.shuangying.core.db.model.SystemDict">
+    <resultMap id="BaseResultMap" type="chat.core.db.model.SystemDict">
         <id column="id" property="id" jdbcType="BIGINT" ></id>
         <result column="domain_id" property="domainId" jdbcType="BIGINT"></result>
         <result column="sys_group" property="sysGroup" jdbcType="VARCHAR"></result>
@@ -23,7 +23,7 @@
         SELECT id,domain_id,sys_group,sys_key,sys_value,sys_type,remark,create_time,update_time,del_flag
     </sql>
 
-    <insert id="insert" parameterType="com.shuangying.core.db.model.SystemDict">
+    <insert id="insert" parameterType="chat.core.db.model.SystemDict">
         insert into tb_system_dict
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="domainId != null and domainId gt 0">
@@ -71,7 +71,7 @@
         </trim>
     </insert>
 
-    <update id="update" parameterType="com.shuangying.core.db.model.SystemDict">
+    <update id="update" parameterType="chat.core.db.model.SystemDict">
         update tb_system_dict
         <set>
             <if test="domainId != null and domainId gt 0">
@@ -106,7 +106,7 @@
 
     <select id="queryById" resultMap="BaseResultMap">
         <include refid="select_sql"/>
-        from tb_system_dict where id = #{id} and domain_id = #{domainId}
+        from tb_system_dict where id = #{id} and domain_id = #{domainId} and del_flag = 1
     </select>
 
     <select id="queryByKey" resultMap="BaseResultMap">
@@ -159,6 +159,7 @@
     </select>
 
     <select id="queryGroupKey" resultMap="BaseResultMap">
-        <include refid="select_sql"/> from tb_system_dict where domain_id = #{domainId} and sys_group = #{sysGroup} and sys_key = #{sysKey}
+        <include refid="select_sql"/> from tb_system_dict where domain_id = #{domainId} and sys_group = #{sysGroup} and
+        sys_key = #{sysKey} and del_flag = 1
     </select>
 </mapper>

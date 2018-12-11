@@ -4,22 +4,23 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 
-<mapper namespace="com.shuangying.core.db.mapper.ServerModelMapper">
+<mapper namespace="chat.core.db.mapper.ServerModelMapper">
 
-    <resultMap id="BaseResultMap" type="com.shuangying.core.db.model.ServerModel">
+    <resultMap id="BaseResultMap" type="chat.core.db.model.ServerModel">
         <id column="id" property="id" jdbcType="BIGINT" ></id>
         <result column="server_ip" property="serverIp" jdbcType="VARCHAR"></result>
         <result column="server_domain" property="serverDomain" jdbcType="VARCHAR"></result>
         <result column="inner_ip" property="innerIp" jdbcType="VARCHAR"></result>
         <result column="http_port" property="httpPort" jdbcType="INTEGER"></result>
         <result column="websocket_port" property="websocketPort" jdbcType="INTEGER"></result>
+        <result column="remark" property="remark" jdbcType="VARCHAR"></result>
     </resultMap>
 
     <sql id="select_sql">
-        SELECT id,server_ip,server_domain,inner_ip,http_port,websocket_port
+        SELECT id,server_ip,server_domain,inner_ip,http_port,websocket_port,remark
     </sql>
 
-    <insert id="insert" parameterType="com.shuangying.core.db.model.ServerModel">
+    <insert id="insert" parameterType="chat.core.db.model.ServerModel">
         insert into tb_server
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="serverIp != null">
@@ -36,6 +37,9 @@
             </if>
             <if test="websocketPort != null">
                 websocket_port,
+            </if>
+            <if test="remark != null">
+                remark,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -54,10 +58,13 @@
             <if test="websocketPort != null">
                 #{websocketPort,jdbcType=INTEGER},
             </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
         </trim>
     </insert>
 
-    <update id="update" parameterType="com.shuangying.core.db.model.ServerModel">
+    <update id="update" parameterType="chat.core.db.model.ServerModel">
         update tb_server
         <set>
             <if test="serverIp != null">
@@ -74,6 +81,9 @@
             </if>
             <if test="websocketPort != null">
                 websocket_port = #{websocketPort,jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
             </if>
         </set>
         where id = #{id,jdbcType=BIGINT}

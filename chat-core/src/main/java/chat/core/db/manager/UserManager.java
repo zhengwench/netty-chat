@@ -43,4 +43,6 @@ public interface UserManager {
     boolean removeSysToken(Long id);
 
     UserInfoDto queryUserInfo(Long domainId, String token);
+
+    int queryByRoleId(Long roleId);
 }

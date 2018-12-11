@@ -9,6 +9,7 @@ public class UserQuery extends BaseQuery {
     private Long roleId;
     private Long roomId;
     private String userName;
+    private String remark;
 
     public Long getDomainId() {
         return domainId;
@@ -40,5 +41,13 @@ public class UserQuery extends BaseQuery {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 }

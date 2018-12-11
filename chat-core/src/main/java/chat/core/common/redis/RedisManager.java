@@ -100,6 +100,24 @@ public class RedisManager {
 
     }
 
+    /**
+     * 判断hash是否存在field
+     * @return
+     */
+    public static boolean hexists(String key,String field){
+        Jedis jedis = null;
+        boolean value = false;
+        try {
+            jedis = getClient();
+            value = jedis.hexists(key,field);
+        } catch (JedisConnectionException e) {
+            logger.error("redis hexists异常,失败key=" + key, e);
+        } finally {
+            returnResource(jedis);
+        }
+        return value;
+    }
+
     public static String hget(String key,String field) {
         Jedis jedis = null;
         String value = null;
@@ -159,7 +177,6 @@ public class RedisManager {
 
     public static Long expire(String key, int seconds) {
         Jedis jedis = null;
-        boolean borrowOrOprSuccess = true;
         Long result = 0L;
         try {
             jedis = getClient();

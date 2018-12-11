@@ -324,4 +324,14 @@ public class UserManagerImpl implements UserManager {
             throw new ManagerException(e);
         }
     }
+
+    @Override
+    public int queryByRoleId(Long roleId) {
+        try {
+            return userMapper.queryByRoleId(roleId);
+        } catch (Exception e) {
+            logger.error("用户 queryByRoleId异常",e);
+            throw new ManagerException(e);
+        }
+    }
 }

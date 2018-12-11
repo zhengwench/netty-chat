@@ -21,7 +21,7 @@ public class Md5Manager {
             String lr = DigestUtils.md5Hex(r.getBytes("utf-8"));
             return lr.toLowerCase();
         } catch (Exception e) {
-            logger.error("MD5移除",e);
+            logger.error("MD5异常",e);
         }
         return null;
     }
@@ -32,7 +32,7 @@ public class Md5Manager {
             String r = DigestUtils.md5Hex(text.getBytes("utf-8"));
             return r;
         } catch (Exception e) {
-            logger.error("MD5移除",e);
+            logger.error("MD5异常",e);
         }
         return null;
     }

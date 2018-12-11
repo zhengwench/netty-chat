@@ -4,9 +4,9 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 
-<mapper namespace="com.shuangying.core.db.mapper.BlackIpMapper">
+<mapper namespace="chat.core.db.mapper.BlackIpMapper">
 
-    <resultMap id="BaseResultMap" type="com.shuangying.core.db.model.BlackIp">
+    <resultMap id="BaseResultMap" type="chat.core.db.model.BlackIp">
         <id column="id" property="id" jdbcType="BIGINT" ></id>
         <id column="domain_id" property="domainId" jdbcType="BIGINT" ></id>
         <result column="ip" property="ip" jdbcType="VARCHAR"></result>
@@ -17,7 +17,7 @@
         SELECT id,domain_id,ip,create_time
     </sql>
 
-    <insert id="insert" parameterType="com.shuangying.core.db.model.BlackIp">
+    <insert id="insert" parameterType="chat.core.db.model.BlackIp">
         insert into tb_black_ip
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="domainId != null">

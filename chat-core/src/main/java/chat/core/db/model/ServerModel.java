@@ -19,6 +19,8 @@ public class ServerModel extends AbstractBaseObject {
 
     private Integer count;
 
+    private String remark;
+
     public Long getId() {
         return id;
     }
@@ -73,5 +75,13 @@ public class ServerModel extends AbstractBaseObject {
 
     public void setCount(Integer count) {
         this.count = count;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 }

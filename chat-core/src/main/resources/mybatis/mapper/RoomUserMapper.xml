@@ -4,9 +4,9 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 
-<mapper namespace="com.shuangying.core.db.mapper.RoomUserMapper">
+<mapper namespace="chat.core.db.mapper.RoomUserMapper">
 
-    <resultMap id="BaseResultMap" type="com.shuangying.core.db.model.RoomUser">
+    <resultMap id="BaseResultMap" type="chat.core.db.model.RoomUser">
         <id column="id" property="id" jdbcType="BIGINT" ></id>
         <result column="domain_id" property="domainId" jdbcType="BIGINT"></result>
         <result column="room_id" property="roomId" jdbcType="BIGINT"></result>
@@ -18,7 +18,7 @@
         SELECT id,domain_id,room_id,user_id,create_time
     </sql>
 
-    <insert id="insert" parameterType="com.shuangying.core.db.model.RoomUser">
+    <insert id="insert" parameterType="chat.core.db.model.RoomUser">
         insert into tb_room_user
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="domainId != null">
@@ -46,7 +46,7 @@
         </trim>
     </insert>
 
-    <update id="update" parameterType="com.shuangying.core.db.model.RoomUser">
+    <update id="update" parameterType="chat.core.db.model.RoomUser">
         update tb_room_user
         <set>
             <if test="domainId != null">

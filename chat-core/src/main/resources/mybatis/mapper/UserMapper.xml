@@ -4,9 +4,9 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 
-<mapper namespace="com.shuangying.core.db.mapper.UserMapper">
+<mapper namespace="chat.core.db.mapper.UserMapper">
 
-    <resultMap id="BaseResultMap" type="com.shuangying.core.db.model.User">
+    <resultMap id="BaseResultMap" type="chat.core.db.model.User">
         <id column="id" property="id" jdbcType="BIGINT" ></id>
         <result column="domain_id" property="domainId" jdbcType="BIGINT"></result>
         <result column="user_name" property="userName" jdbcType="VARCHAR"></result>
@@ -25,7 +25,7 @@
         <result column="del_flag" property="delFlag" jdbcType="INTEGER"></result>
     </resultMap>
 
-    <resultMap id="DtoBaseResultMap" type="com.shuangying.core.db.model.dto.UserDto">
+    <resultMap id="DtoBaseResultMap" type="chat.core.db.model.dto.UserDto">
         <id column="id" property="id" jdbcType="BIGINT" ></id>
         <result column="domain_id" property="domainId" jdbcType="BIGINT"></result>
         <result column="user_name" property="userName" jdbcType="VARCHAR"></result>
@@ -45,7 +45,7 @@
         SELECT id,domain_id,user_name,password,salt,room_id,icon,role_id,login_ip,status,remark,sys_token,token,create_time,update_time,del_flag
     </sql>
 
-    <insert id="insert" parameterType="com.shuangying.core.db.model.User">
+    <insert id="insert" parameterType="chat.core.db.model.User">
         insert into sys_user
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="domainId != null">
@@ -129,7 +129,7 @@
         </trim>
     </insert>
 
-    <update id="update" parameterType="com.shuangying.core.db.model.User">
+    <update id="update" parameterType="chat.core.db.model.User">
         update sys_user
         <set>
             <if test="domainId != null">
@@ -145,7 +145,7 @@
                 salt = #{salt,jdbcType=VARCHAR},
             </if>
             <if test="roomId != null">
-                role_id = #{roomId,jdbcType=BIGINT},
+                room_id = #{roomId,jdbcType=BIGINT},
             </if>
             <if test="icon != null">
                 icon = #{icon,jdbcType=VARCHAR},
@@ -207,7 +207,7 @@
         order by id desc LIMIT #{query.startRow,jdbcType=INTEGER}, #{query.pageSize,jdbcType=INTEGER}
     </select>
 
-    <select id="queryDtoPageList" resultType="com.shuangying.core.db.model.dto.UserDto">
+    <select id="queryDtoPageList" resultType="chat.core.db.model.dto.UserDto">
         select su.id id,su.user_name userName,su.password password,su.room_id roomId,tr.room_name roomName,su.role_id roleId,sr.role_name roleName,
         su.login_ip loginIp,su.status status,su.remark remark,su.create_time createTime,su.update_time updateTime
         from sys_user su left join sys_role sr on su.role_id = sr.id left join tb_room tr on su.room_id = tr.id
@@ -224,6 +224,9 @@
             </if>
             <if test="query.userName!=null and query.userName!=''">
                 and su.user_name=#{query.userName}
+            </if>
+            <if test="query.remark!=null and query.remark!=''">
+                and su.remark like "%"#{query.remark}"%"
             </if>
         </where>
         order by su.id desc LIMIT #{query.startRow,jdbcType=INTEGER}, #{query.pageSize,jdbcType=INTEGER}
@@ -246,14 +249,17 @@
             <if test="query.userName!=null and query.userName!=''">
                 and user_name=#{query.userName}
             </if>
+            <if test="query.remark!=null and query.remark!=''">
+                and remark like "%"#{query.remark}"%"
+            </if>
         </where>
     </select>
-    
+
     <select id="queryByUserName" resultMap="BaseResultMap">
         <include refid="select_sql"/> from sys_user
         where user_name = #{userName} and domain_id=#{domainId} and del_flag = 1
     </select>
-    
+
     <update id="remove">
         update sys_user set del_flag = -1 where id=#{id}
     </update>
@@ -272,7 +278,7 @@
         update sys_user set login_ip = #{loginIp} where id = #{id}
     </update>
 
-    <select id="queryOnlineList" resultType="com.shuangying.core.db.model.dto.UserOnlineDto">
+    <select id="queryOnlineList" resultType="chat.core.db.model.dto.UserOnlineDto">
         select su.id id,su.user_name userName,su.icon userIcon,sr.role_icon roleIcon from sys_user su left join sys_role sr on su.role_id = sr.id
         where su.domain_id = #{domainId} and su.room_id = #{roomId}
         <if test="count!=null and count>0">
@@ -288,8 +294,12 @@
         update sys_user set sys_token = null where id = #{id}
     </update>
 
-    <select id="queryUserInfo" resultType="com.shuangying.core.db.model.dto.UserInfoDto">
+    <select id="queryUserInfo" resultType="chat.core.db.model.dto.UserInfoDto">
         select su.id id,su.icon icon,su.user_name userName,su.role_id roleId,sr.role_name roleName,su.login_ip loginIp,su.create_time createTime
         from sys_user su left join sys_role sr on su.role_id = sr.id where su.domain_id=#{domainId} and su.token=#{token} and su.del_flag = 1
+    </select>
+
+    <select id="queryByRoleId" resultType="java.lang.Integer">
+        select count(*) from sys_user where role_id = #{roleId} and del_flag = 1
     </select>
 </mapper>

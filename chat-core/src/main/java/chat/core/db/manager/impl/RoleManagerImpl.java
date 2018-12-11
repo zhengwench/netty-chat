@@ -206,12 +206,14 @@ public class RoleManagerImpl implements RoleManager {
         try {
             String key = "chat_"+roleId;
             try {
-                if (RedisManager.exists(key.hashCode() + "")){
+                if (RedisManager.hexists(key.hashCode() + "",authority.hashCode() + "")){
                     String authresult = RedisManager.hget(key.hashCode() + "",authority.hashCode() + "");
-                    if ("true".equals(authresult)){
-                        return true;
+                    if (!StringUtils.isEmpty(authresult)){
+                        if ("true".equals(authresult)){
+                            return true;
+                        }
+                        return false;
                     }
-                    return false;
                 }
             } catch (Exception e) {
                 logger.error("redis 查询角色资源异常",e);
@@ -229,6 +231,8 @@ public class RoleManagerImpl implements RoleManager {
                     logger.error("redis设置角色资源异常",e);
                 }
                 return true;
+            }else {
+                RedisManager.hset(key.hashCode() + "", authority.hashCode() + "", "false");
             }
         } catch (Exception e) {
             logger.error("角色 queryRolePermAndAuthority异常",e);

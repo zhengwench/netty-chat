@@ -4,9 +4,9 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 
-<mapper namespace="com.shuangying.core.db.mapper.RoleMapper">
+<mapper namespace="chat.core.db.mapper.RoleMapper">
 
-    <resultMap id="BaseResultMap" type="com.shuangying.core.db.model.Role">
+    <resultMap id="BaseResultMap" type="chat.core.db.model.Role">
         <id column="id" property="id" jdbcType="BIGINT" ></id>
         <id column="domain_id" property="domainId" jdbcType="BIGINT" ></id>
         <result column="role_name" property="roleName" jdbcType="VARCHAR"></result>
@@ -18,7 +18,7 @@
         <result column="del_flag" property="delFlag" jdbcType="INTEGER"></result>
     </resultMap>
 
-    <resultMap id="BasePermissionResultMap" type="com.shuangying.core.db.model.Permission">
+    <resultMap id="BasePermissionResultMap" type="chat.core.db.model.Permission">
         <id column="id" property="id" jdbcType="BIGINT" ></id>
         <result column="parent_id" property="parentId" jdbcType="BIGINT"></result>
         <result column="type" property="type" jdbcType="INTEGER"></result>
@@ -31,7 +31,7 @@
         SELECT id,domain_id,role_name,role_icon,perm_ids,remark,create_time,update_time,del_flag
     </sql>
 
-    <insert id="insert" parameterType="com.shuangying.core.db.model.Role" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insert" parameterType="chat.core.db.model.Role" useGeneratedKeys="true" keyProperty="id">
         insert into sys_role
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="domainId != null">
@@ -73,7 +73,7 @@
         </trim>
     </insert>
 
-    <update id="update" parameterType="com.shuangying.core.db.model.Role">
+    <update id="update" parameterType="chat.core.db.model.Role">
         update sys_role
         <set>
             <if test="domainId != null">
