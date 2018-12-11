@@ -6,7 +6,7 @@
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>密码：</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    <input type="password" class="input-text valid" autocomplete="off" value="" placeholder="密码" id="Password" name="Password">
+                    <input type="password" class="input-text valid" autocomplete="off" value="" placeholder="密码" id="password" name="password">
                 </div>
             </div>
             <div class="row cl">
@@ -65,7 +65,7 @@
                                 window.parent.location.reload();
                             }
                             else {
-                                layer.msg(data.errorDesc, { icon: 5, time: 1000 });
+                                layer.msg(data.errorDesc, { icon: 5, time: 2000 });
                             }
                         }
                     });

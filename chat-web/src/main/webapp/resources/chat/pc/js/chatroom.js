@@ -13,7 +13,6 @@ function ChatRoom(url, protocol, options) {
 
     var defaultOptions = {
         reconnect: true,
-        reconnectInterval: 30,
         heartBeat: true,
         heartBeatInterval: 30,
         checkStatus: true,
@@ -60,8 +59,7 @@ ChatRoom.prototype = {
         console.log(this.data)
     },
     send(data) {
-        if (this.connecton.readyState !== 1) {
-            console.warn('服务器未连接，请稍候重试~')
+        if (this.connecton.readyState !== 1) { //未连接不做任何操作
             return null
         }
         if (new Tools().type(data) == 'Object') {
@@ -71,26 +69,12 @@ ChatRoom.prototype = {
         }
     },
     reconnect: function (res) {
-        clearInterval(window.reconnectInterval)
         //判断是否是配置重连
         if (!this.options.reconnect) {
             return null
         }
-        if (this.connecton.readyState > 1) {
-            this.connecton.close()
-            initChatRoom()
-        }
-        window.reconnectInterval = setInterval(function () {
-            if (this.connecton.readyState > 1) {
-                this.connecton.close()
-                console.log('正在重连...')
-                initChatRoom()
-            } else {
-                this.checkStatus()
-                this.heartBeat()
-                clearInterval(window.reconnectInterval)
-            }
-        }.bind(this), this.options.reconnectInterval * 1000)
+        console.log('正在重连...')
+        initChatRoom()
     },
     heartBeat: function () {
         if (!this.options.heartBeat) {
@@ -98,18 +82,10 @@ ChatRoom.prototype = {
         }
         //清除上一次产生的定时器
         clearInterval(window.heartBeatInterval)
-        var domain = this.uri.match(/.*domain=(\w{1,3}\.\w{1,3}\.\w{1,3}\.\w{1,3}).*/)
-        var roomId = this.uri.match(/.*[roomId|roomid]=(\w+).*/)
         var heartBeatData = {
             "command": "C_HEART_BEAT",
-            "domain": !domain ? '127.0.0.1' : domain[1],
-            "roomId": !roomId ? '1' : roomId[1],
-        }
-        var userInfo = JSON.parse($t.cookie.get('user_info'))
-        if (userInfo) {
-            for (var i in userInfo) {
-                heartBeatData[i] = userInfo[i]
-            }
+            "domain": NeedInfo.domain,
+            "roomId": NeedInfo.roomId,
         }
         window.heartBeatInterval = setInterval(function () {
             this.send(heartBeatData)
@@ -122,12 +98,11 @@ ChatRoom.prototype = {
         //清除上一次产生的定时器
         clearInterval(window.checkInterval)
         window.checkInterval = setInterval(function () {
-            if (this.connecton.readyState > 1) {
-                //断开连接后清除定时器
-                clearInterval(window.checkInterval)
-                clearInterval(window.heartBeatInterval)
+            console.log('检查连接状态：状态码 ' + this.connecton.readyState)
+            if (this.connecton.readyState == 3) {
                 this.reconnect()
             }
+            this.checkStatus()
         }.bind(this), this.options.checkStatusInterval * 1000)
     }
 }

@@ -70,6 +70,10 @@ function getAllSearchValue(aoData) {
         "name": 'roomId',
         "value": trimStr($('#roomId').val())
     });
+    aoData.push({
+        "name": 'remark',
+        "value": trimStr($('#remark').val())
+    });
 }
 
 function searchUserList() {
@@ -126,7 +130,7 @@ $("#user_table").on("click", '#join', function () {
                     layer.msg('操作成功', { icon: 1, time: 1000 });
                     userTable.fnDraw();
                 } else {
-                    layer.msg(data.errorDesc, { icon: 5, time: 1000 });
+                    layer.msg(data.errorDesc, { icon: 5, time: 2000 });
                 }
             }
         );
@@ -142,7 +146,7 @@ $("#user_table").on("click", '#addBlackip', function () {
                     layer.msg('操作成功', { icon: 1, time: 1000 });
                     userTable.fnDraw();
                 } else {
-                    layer.msg(data.errorDesc, { icon: 5, time: 1000 });
+                    layer.msg(data.errorDesc, { icon: 5, time: 2000 });
                 }
             }
         );
@@ -158,7 +162,7 @@ $("#user_table").on("click", '#unjoin', function () {
                     layer.msg('操作成功', { icon: 1, time: 1000 });
                     userTable.fnDraw();
                 } else {
-                    layer.msg(data.errorDesc, { icon: 5, time: 1000 });
+                    layer.msg(data.errorDesc, { icon: 5, time: 2000 });
                 }
             }
         );
@@ -174,7 +178,7 @@ $("#user_table").on("click", '#remove', function () {
                     layer.msg('操作成功', { icon: 1, time: 1000 });
                     userTable.fnDraw();
                 } else {
-                    layer.msg(data.errorDesc, { icon: 5, time: 1000 });
+                    layer.msg(data.errorDesc, { icon: 5, time: 2000 });
                 }
             }
         );

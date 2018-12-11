@@ -118,7 +118,7 @@ function getsec(str) {
         return str1 * 60 * 60 * 1000;
     }
     //d10 = 10天
-    else if (str2 == "d") {
+    else if (str2 == "d                  ") {
         return str1 * 24 * 60 * 60 * 1000;
     }
 }

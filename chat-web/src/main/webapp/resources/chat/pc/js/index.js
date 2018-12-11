@@ -170,28 +170,7 @@ $(function () {
                         $('#nav-username').html('<img title="' + res.result.userName +
                             '" src="/resources/chat/pc/images/default/' + res.result.userIcon + '.png"/>')
                     }
-                    window.chatRoom.close()
-                    $.post(base_url + '/chat/webSocketUrl/')
-                        .success(function (res) {
-                            var options = {}
-                            if (res.success) {
-
-                                window.chatRoom = new ChatRoom(res.result, protocol, options)
-                                $('.login-modal-mask').fadeOut(200)
-                                $('#login').hide()
-                                $('.nav-user-info').show()
-                                $('#login-form')[0].reset()
-                            } else {
-                                layer.alert('聊天室初始化失败')
-                                document.write('')
-                            }
-                        })
-                        .error(function () {
-                            layer.alert('聊天室初始化失败', function () {
-                                document.write('')
-                            })
-                        })
-
+                    window.location.reload()
                 } else {
                     layer.msg(res.errorDesc)
                     $('#login-form')[0].reset()
@@ -217,10 +196,10 @@ $(function () {
         layer.confirm('要退出吗？', {}, function () {
             $t.cookie.del('user_info')
             $t.cookie.del('chat_token')
-            clearInterval(window.reconnectInterval)
             clearInterval(window.checkInterval)
             clearInterval(window.heartBeatInterval)
             chatRoom.connecton.close()
+            //window.location.reload()
             $('.nav-user-info').hide()
             $('.login').show()
             layer.closeAll()
@@ -526,7 +505,21 @@ $(function () {
     })
     //关闭@提示
     $('#at-msg-tips').click(function () {
-        $(this).css('transform', 'translate3d(-150%, 0, 0)')
+        $(this).css('transform', 'translate3d(150%, 0, 0)')
+    })
+    //scroll-bottom
+    $('#scroll-bottom').click(function () {
+        NeedInfo.autoScroll = true
+        $('.msg-container')[0].scrollTop = $('.msg-container')[0].scrollHeight
+    })
+    //tabbar增加类
+    $('.tab-bar > a').each(function (i, m) {
+        if (i == 0) {
+            $(m).addClass('active')
+        }
+        $(m).click(function () {
+            $(this).addClass('active').siblings().removeClass('active')
+        })
     })
 });
 
@@ -772,14 +765,13 @@ function sendPictureContent(e) {
         })
     }
     return null
-
 }
 
 //发送信息
 function sendMessageHandler() {
-    var user = $t.cookie.get('user_info')
+    var user = $t.json($t.cookie.get('user_info'))
     if (!user) {
-
+        return null
     }
     //用户权限
     var forbidchat = false
@@ -790,6 +782,7 @@ function sendMessageHandler() {
             }
         }
     }
+
     if (forbidchat == false && NeedInfo.forbidChat == 1) {
         return null
     }
@@ -979,9 +972,12 @@ function removeRoomUser(uid, authority) {
     })
 }
 
+//提出其他用户
+
 window.onbeforeunload = function (ev) {
     //清除本地历史记录
     $t.storage.set('history', '')
+    clearChatRoomAll()
     chatRoom.connecton.close()
 }
 
@@ -1029,7 +1025,7 @@ function reCallContextMenu(msgId) {
 }
 
 //撤回别人的消息
-function reCallContextMenu(msgId) {
+function reCallOtherContextMenu(msgId) {
     var e = e || event
     e.preventDefault()
     var user = $t.json($t.cookie.get('user_info'))

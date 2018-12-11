@@ -22,6 +22,7 @@
                     </#list>
                 </#if>
         </select>
+        备注:<input type="text" class="input-text" style="width:250px" placeholder="" id="remark" name="remark">
         <button type="submit" class="btn btn-success radius" id="search" name=""><i class="Hui-iconfont">&#xe665;</i> 搜索</button>
     </div>
     <div class="cl pd-5 bg-1 bk-gray mt-20">

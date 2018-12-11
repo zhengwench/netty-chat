@@ -86,7 +86,7 @@ $("#member_table").on("click", '#remove', function () {
                     layer.msg('操作成功', { icon: 1, time: 1000 });
                     memberTable.fnDraw();
                 } else {
-                    layer.msg(data.errorDesc, { icon: 5, time: 1000 });
+                    layer.msg(data.errorDesc, { icon: 5, time: 2000 });
                 }
             }
         );

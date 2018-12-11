@@ -45,9 +45,14 @@
                                     <option value="mTabMenu">手机菜单</option>
                             </#if>
                             <#if (tabMenu.sysKey!'') == 'pcTabMenu'>
-                                <option selected="selected" value="pcTabMenu">PC菜单</option>
+                                <option selected="selected" value="pcTabMenu">PC右侧菜单</option>
                             <#else>
-                                <option value="pcTabMenu">PC菜单</option>
+                                <option value="pcTabMenu">PC右侧菜单</option>
+                            </#if>
+                            <#if (tabMenu.sysKey!'') == 'pcTopMenu'>
+                                <option selected="selected" value="pcTopMenu">PC头部菜单</option>
+                            <#else>
+                                <option value="pcTopMenu">PC头部菜单</option>
                             </#if>
                         </select>
                     </span>
@@ -109,7 +114,7 @@
                                 window.parent.location.reload();
                             }
                             else {
-                                layer.msg(data.errorDesc, { icon: 5, time: 1000 });
+                                layer.msg(data.errorDesc, { icon: 5, time: 2000 });
                             }
                         }
                     });

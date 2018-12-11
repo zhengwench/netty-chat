@@ -21,18 +21,6 @@
                         </div>
                     </div>
                     <div class="row cl">
-                        <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>在线充值：</label>
-                        <div class="formControls col-xs-8 col-sm-9">
-                            <input type="text" class="input-text" value="${map["recharge_url"]!''}" placeholder="" id="recharge_url" name="recharge_url">
-                        </div>
-                    </div>
-                    <div class="row cl">
-                        <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>彩票官网：</label>
-                        <div class="formControls col-xs-8 col-sm-9">
-                            <input type="text" class="input-text" value="${map["web_url"]!''}" placeholder="" id="web_url" name="web_url">
-                        </div>
-                    </div>
-                    <div class="row cl">
                         <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>PC公告：</label>
                         <div class="formControls col-xs-8 col-sm-9">
                             <textarea id="pc_notice" name="pc_notice" name="mobile_notice" class="textarea">${map["pc_notice"]!''}</textarea>
@@ -98,7 +86,7 @@
                         $('#pcLogoUploadSrc').attr("src", data.result.result);
                     }
                     else {
-                        layer.msg(data.result.errorDesc, { icon: 5, time: 1000 });
+                        layer.msg(data.result.errorDesc, { icon: 5, time: 2000 });
                     }
                 }
             });
@@ -111,7 +99,7 @@
                         $('#mLogoUploadSrc').attr("src", data.result.result);
                     }
                     else {
-                        layer.msg(data.result.errorDesc, { icon: 5, time: 1000 });
+                        layer.msg(data.result.errorDesc, { icon: 5, time: 2000 });
                     }
                 }
             });
@@ -136,7 +124,7 @@
                                 alert('保存成功');
                             }
                             else {
-                                layer.msg(data.errorDesc, { icon: 5, time: 1000 });
+                                layer.msg(data.errorDesc, { icon: 5, time: 2000 });
                             }
                         }
                     });

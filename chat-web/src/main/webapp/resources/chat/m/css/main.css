@@ -780,6 +780,7 @@ nav {
     overflow: auto;
     bottom: 0.9rem;
     z-index: 2;
+    -webkit-overflow-scrolling: touch;
 }
 
 .reciever {
@@ -1238,10 +1239,16 @@ textarea img {
 }
 
 .forbidden {
+    position: fixed;
+    display: none;
     font-size: 0.26rem;
     text-align: center;
     line-height: 0.4rem;
+    z-index: 11;
+    bottom: 1rem;
     color: rgba(200, 167, 98, 1);
+    width: 100%;
+    text-align: center;
 
 }
 
@@ -1254,10 +1261,9 @@ textarea img {
 
 .inferBox {
     position: fixed;
-    left: 0;
-    width: 100%;
-    top: 2.2rem;
-    text-align: center;
+    right: 0;
+    bottom: 2.2rem;
+    text-align: right;
     z-index: 9;
     display: none;
 }
@@ -1467,112 +1473,89 @@ modal-weixin-share span{
     z-index: 3;
 }
 
+
 /*登录页*/
-.login, .login body {
-    background: rgba(235, 235, 235, 1);
+.login, .login body{
+    background:rgba(235,235,235,1);
     width: 100%;
     height: 100%;
 }
-
-.login header {
+.login header{
     width: 100%;
     padding-top: 0.22rem;
-    height: 0.96rem;
+    height:0.96rem ;
     text-align: center;
-    background: rgba(235, 235, 235, 1);
+    background:rgba(235,235,235,1);
     box-sizing: border-box;
     font-size: 0.5rem;
-    color: rgba(164, 163, 163, 1);;
+    color:rgba(164,163,163,1);;
 }
-
-.loginContent {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    margin-top: -2.4rem;
-    margin-left:-2.8rem;
-    width: 5.6rem;
-    height: 4.7rem;
-    background: #fff;
-    z-index: 300000;
-    border-radius: 10px;
-    -webkit-border-radius: 10px;
-    display: none;
+.loginContent{
+    padding-top: 1.6rem;
 }
-
-.login header .back {
+.login header .back{
     position: absolute;
     top: 0.22rem;
     left: 0.2rem;
 }
-
-.login header .title {
+.login header .title{
     width: 70%;
     left: 15%;
     right: 15%;
     position: absolute;
-    left: 0 .;
+    left:0. ;
     font-size: 0.5rem;
-    color: rgba(164, 163, 163, 1);;
+    color:rgba(164,163,163,1);;
     line-height: 0.76rem;
 }
-
-.login img {
+.login img{
     width: 0.76rem;
     height: 0.76rem;
     float: left;
 }
-
-.avatar {
-    width: 1.83rem;
-    height: 1.85rem;
-    border-radius: 50%;
-    -webkit-border-radius: 50%;
+.avatar{
+    width:1.83rem;
+    height:1.85rem;
+    border-radius:50%;
+    -webkit-border-radius:50%;
     border: 0.1rem solid #C9AA67;
     margin: 0 auto;
 }
-
-.avatar img {
+.avatar img{
     width: 100%;
     height: 100%;
 }
-
-.loginBox {
+.loginBox{
     width: 100%;
-    padding: 0 0.5rem;
-    margin-top: 0.5rem;
+    padding:0 1rem;
+    margin-top:1rem;
     box-sizing: border-box;
 }
-
-.input_row {
-    border-bottom: 1px solid rgba(192, 192, 192, 1);
+.input_row{
+    border-bottom: 1px solid rgba(192,192,192,1);
     height: 0.7rem;
 }
-
-.input_row.usernameRow {
+.input_row.usernameRow{
     padding-left: 0.8rem;
-    background: url(/resources/chat/m/images/user.png) no-repeat 0.1rem center;
-    background-size: 0.47rem 0.54rem;
+    background: url(../images/user.png) no-repeat 0.1rem center;
+    background-size:0.47rem 0.54rem ;
     margin-bottom: 0.6rem;
 }
-
-.input_row.passwordRow {
-    position: relative;
+.input_row.passwordRow{
+    position:relative ;
     padding-left: 0.8rem;
-    background: url(/resources/chat/m/images/password.png) no-repeat 0.1rem center;
-    background-size: 0.46rem 0.53rem;
+    background: url(../images/password.png) no-repeat 0.1rem center;
+    background-size:0.46rem 0.53rem ;
     margin-bottom: 0.8rem;
 }
-
-.input_row.passwordRow .passHidden {
+.input_row.passwordRow .passHidden{
     position: absolute;
     right: 0.3rem;
     bottom: 0.1rem;
     width: 0.41rem;
     height: 0.28rem;
 }
-
-.input_row.passwordRow .passSee {
+.input_row.passwordRow .passSee{
     display: none;
     position: absolute;
     right: 0.3rem;
@@ -1580,41 +1563,36 @@ modal-weixin-share span{
     width: 0.47rem;
     height: 0.23rem;
 }
-
-.loginBox input {
+.loginBox input{
     background: transparent;
     border: 0;
     margin-bottom: 0;
     height: 0.6rem;
     line-height: 0.6rem;
-    font-size: 0.3rem;
-    font-family: Adobe Heiti Std R;
+    font-size:0.3rem;
+    font-family:Adobe Heiti Std R;
     padding-left: 0.2rem;
     margin-top: 0.04rem;
 
 }
-
-input[type=submit] {
+input[type=submit]{
     width: 100%;
-    height: 0.78rem;
+    height:0.78rem;
     line-height: 0.78rem;
-    background: rgba(201, 170, 103, 1);
-    border-radius: 10px;
-    -webkit-border-radius: 10px;
+    background:rgba(201,170,103,1);
+    border-radius:10px;
+    -webkit-border-radius:10px;
     border: 0;
     color: #fff;
     font-size: 0.4rem;
     padding: 0;
     margin-bottom: 0.2rem;
 }
-.loginBtn input[type=submit]{
-    width:73%;
-}
-.loginBtn {
-    width: 4.36rem;
+.loginBtn{
+    width:4.36rem;
     margin: 0 auto;
-    text-align: center;
 }
+
 
 
 /*我的红包记录页*/
@@ -1855,7 +1833,7 @@ input[type=submit] {
 }
 
 .userBox .loginIp {
-    border: 0;
+    border: 0 !important;
 }
 
 
@@ -1944,7 +1922,24 @@ input[type=submit] {
     width: 5.5rem;
     margin: 0 auto;
 }
-
+.userBtn {
+    width: 100%;
+    margin: 0 auto;
+    margin-top: 0.3rem;
+    border-radius: 10px;
+    height: 0.8rem;
+    line-height: 0.8rem;
+    text-align: center;
+    border: 1px solid #C8A762;
+    color: #C8A762;
+    background: #F5F2F2;
+}
+.mui-toast-container, .mui-popup{
+    z-index: 33333333 !important;
+}
+.userBtn1{
+margin-top: 0.5rem;
+}
 .confimPass {
     border: 0;
 }
@@ -2199,6 +2194,7 @@ input[type=file] {
     top: 0;
     z-index: 300000;
     display: none;
+    overflow: auto;
 }
 
 input:-webkit-autofill {

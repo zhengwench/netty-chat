@@ -10,6 +10,8 @@
     <meta name="viewport" content="width=320.1,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,minimal-ui" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta content="telephone=no" name="format-detection" />
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="cache-control" content="no-cache">
     <link href="/resources/chat/m/css/mui.min.css" rel="stylesheet" />
     <link rel="icon" href="/resources/chat/m/favicon.ico" type="image/x-icon" />
     <link rel="shortcut icon" href="/resources/chat/m/favicon.ico" type="image/x-icon"/>
@@ -35,7 +37,6 @@
     </div>
 </header>
 <div id="mask" class="mask"></div>
-<div id="mask1" class="mask1"></div>
 <div id="countBox" class="num"></div>
 <nav class="">
     <div class="">
@@ -47,9 +48,9 @@
                 <#list tabmenu as r>
                     <li>
                         <#if (r.sysType!'0'?number) == 1>
-                            <a showValue="true" showId="page2"  openUrl="true" dataHref="${r.sysValue!''}">${r.remark!''}</a>
+                            <a showValue="true" showId="page${r.id!''}"  openUrl="true" dataHref="${r.sysValue!''}">${r.remark!''}</a>
                             <#else>
-                            <a showValue="true" showId="page2"  openUrl="false" dataHref="${r.sysValue!''}">${r.remark!''}</a>
+                            <a showValue="true" showId="page${r.id!''}"  openUrl="false" dataHref="${r.sysValue!''}">${r.remark!''}</a>
                         </#if>
                     </li>
                 </#list>
@@ -81,10 +82,10 @@
         <p class="joinList joinList2">欢迎<span>育儿回访来</span>加入聊天室</p>
         <p class="joinList joinList3">欢迎<span>育儿回访来</span>加入聊天室</p>-->
     </div>
-    <#--<div  class="forbidden forbiddenYes">聊天室已开启禁言</div>-->
-    <#--<div  class="forbidden forbiddenNo">聊天室已关闭禁言</div>-->
+    <div id="forbiddenYes"  class="forbidden forbiddenYes">聊天室已开启禁言</div>
+    <div  id="forbiddenNo" class="forbidden forbiddenNo">聊天室已关闭禁言</div>
     <#--<div  class="revert">你撤回一条消息</div>-->
-    <div id="infer" onclick="inferFun()" class="inferBox"><span  class="infer"><span>abc</span>@了你，点击查看</span></div>
+    <div id="infer"  onclick="inferFun()" class="inferBox"><span  class="infer"><span>abc</span>@了你，点击查看</span></div>
 </div>
 <!--放大图片-->
 <div class="big_img">
@@ -252,21 +253,32 @@
 <div id="modal-weixin-share"></div>
 
 
-<#--登录弹框-->
-<div id="loginPage" class="loginContent">
-    <div class="loginBox">
-        <div class="input_row usernameRow">
-            <input type="text" id="loginPageUsername" value="" placeholder="用户名/手机号/邮箱" autocomplete="off" />
-        </div>
-        <div class="input_row passwordRow">
-            <input type="password" id="loginPagePassword" value="" placeholder="用户密码" autocomplete="off" />
-            <img id="passHidden" class="passHidden" src="/resources/chat/m/images/passHidden.png" onclick="pwdFun1(this)"/>
-            <img id="passSee" class="passSee" src="/resources/chat/m/images/passSee.png" onclick="pwdFun2(this)"/>
-        </div>
+<#--登录页面-->
+<div id="loginPage" class="newPage userPass">
+    <div class="header">
+        <a onclick="loginClose()" class="back">
+            <img src="/resources/chat/m/images/back2.png" />
+        </a>
+        <h1 class="title">登录</h1>
     </div>
+    <div class="loginContent">
+        <div class="avatar">
+            <img src="/resources/chat/m/images/userSet.png" />
+        </div>
+        <div class="loginBox">
+            <div class="input_row usernameRow">
+                <input type="text" id="loginPageUsername" value="" placeholder="用户名/手机号/邮箱" autocomplete="off" />
+            </div>
+            <div class="input_row passwordRow">
+                <input type="password" id="loginPagePassword" value="" placeholder="用户密码" autocomplete="off" />
+                <img id="passHidden" class="passHidden" src="/resources/chat/m/images/passHidden.png" onclick="pwdFun1(this)"/>
+                <img id="passSee" class="passSee" src="/resources/chat/m/images/passSee.png" onclick="pwdFun2(this)"/>
+            </div>
+        </div>
 
-    <div class="loginBtn">
-        <input class="loginBtn" type="submit" value="登录"  onclick="loginSubmit()"/>
+        <div class="loginBtn">
+            <input class="loginBtn" type="submit" value="登录"  onclick="loginSubmit()"/>
+        </div>
     </div>
 </div>
 
@@ -364,11 +376,6 @@
             <img src="/resources/chat/m/images/back2.png" />
         </a>
         <h1 class="title">用户中心</h1>
-        <div class="edit">
-            <a onclick="userPassPageFun()" >
-                <img src="/resources/chat/m/images/edit.png" />
-            </a>
-        </div>
     </div>
     <div class="userInfoContent">
         <div class="topBox">
@@ -394,7 +401,10 @@
                     <span class="userTitle">登录IP：</span> <span id="loginIp"></span>
                 </div>
             </div>
+            <div class="userBtn userBtn1" onclick="userPassPageFun()">修改密码</div>
+            <div class="userBtn" onclick="loginout()">退出登录</div>
         </div>
+
     </div>
 
 </div>

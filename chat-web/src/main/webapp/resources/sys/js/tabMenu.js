@@ -43,7 +43,10 @@ function tabMenuTableList() {
                         return '手机端菜单';
                     }
                     if (data == 'pcTabMenu'){
-                        return 'PC端菜单';
+                        return 'PC右侧菜单';
+                    }
+                    if (data == 'pcTopMenu'){
+                        return 'PC头部菜单';
                     }
                     return "";
                 }
@@ -98,7 +101,7 @@ $("#tabMenu_table").on("click", '#remove', function () {
                     layer.msg('操作成功', { icon: 1, time: 1000 });
                     tabMenuTable.fnDraw();
                 } else {
-                    layer.msg(data.errorDesc, { icon: 5, time: 1000 });
+                    layer.msg(data.errorDesc, { icon: 5, time: 2000 });
                 }
             }
         );

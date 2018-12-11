@@ -130,7 +130,7 @@ $("#room_table").on("click", '#forbid', function () {
                     layer.msg('操作成功', { icon: 1, time: 1000 });
                     roomTable.fnDraw();
                 } else {
-                    layer.msg(data.errorDesc, { icon: 5, time: 1000 });
+                    layer.msg(data.errorDesc, { icon: 5, time: 2000 });
                 }
             }
         );
@@ -146,7 +146,7 @@ $("#room_table").on("click", '#unforbid', function () {
                     layer.msg('操作成功', { icon: 1, time: 1000 });
                     roomTable.fnDraw();
                 } else {
-                    layer.msg(data.errorDesc, { icon: 5, time: 1000 });
+                    layer.msg(data.errorDesc, { icon: 5, time: 2000 });
                 }
             }
         );
@@ -162,7 +162,7 @@ $("#room_table").on("click", '#remove', function () {
                     layer.msg('操作成功', { icon: 1, time: 1000 });
                     roomTable.fnDraw();
                 } else {
-                    layer.msg(data.errorDesc, { icon: 5, time: 1000 });
+                    layer.msg(data.errorDesc, { icon: 5, time: 2000 });
                 }
             }
         );

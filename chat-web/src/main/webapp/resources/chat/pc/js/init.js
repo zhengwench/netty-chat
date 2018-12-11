@@ -2,14 +2,13 @@ $(function () {
     //初始化登陆状态
     initLoginStatus()
     //初始化禁言状态
-    initForbidChat
+    initForbidChat()
     //初始化聊天室连接
     initChatRoom()
 })
 
 function initLoginStatus() {
     var userinfo = JSON.parse(new Tools().cookie.get('user_info'))
-
     window.uToken = $t.cookie.get('chat_token')
     if (userinfo) {
         if (userinfo.userIcon.indexOf('http://') != -1) {
@@ -26,8 +25,22 @@ function initLoginStatus() {
 }
 
 function initForbidChat() {
-    var user = $t.json($t.cookie.get('user_info'))
+    if (NeedInfo.forbidChat) {
+        var html = "<img src=\"/resources/chat/pc/images/forbid.png\" width=\"28\"><span>聊天室已开启禁言</span>"
+        $dom = $('.chat-room-forbiden-tip')
+        $dom.html(html)
+        $dom.css('display', 'flex')
+    } else {
+        $dom = $('.chat-room-forbiden-tip')
+        if ($dom.text() == "聊天室已开启禁言") {
+            var html = '<img src="/resources/chat/pc/images/non-forbid.png" height="20"><span>聊天室已关闭禁言</span>'
+            $dom = $('.chat-room-forbiden-tip')
+            $dom.html(html)
+            $dom.css('display', 'flex')
+        }
 
+    }
+    var user = $t.json($t.cookie.get('user_info'))
     if (user) {
         var forbidchat = false
         if (user.authority) {
@@ -38,47 +51,33 @@ function initForbidChat() {
             }
         }
         if (forbidchat == true) {
-            $('#editor').attr('contenteditable', 'true')
             $('#editor').attr('title', '')
             $('#editor').css({
                 background: 'transparent'
             })
-        } else {
-            $('#editor').attr('contenteditable', 'false')
-            $('#editor').attr('title', '管理员已开启禁言')
-            $('#editor').css({
-                background: 'rgba(225,225,225,0.8)'
-            })
         }
-
-    } else {
-        $('#editor').attr('contenteditable', 'false')
-        $('#editor').attr('title', '管理员已开启禁言')
-        $('#editor').css({
-            background: 'rgba(225,225,225,0.8)'
-        })
     }
-
 }
 
 function initChatRoom() {
     if (window.chatRoom) {
         window.chatRoom.connecton.close()
-        window.chatRoom = null
     }
+    //如果ajax未完成则等待完成
+    if (NeedInfo.getting) {
+        return null
+    }
+    NeedInfo.getting = true
+    console.log(NeedInfo.getting)
     $.post(base_url + '/chat/webSocketUrl/', {roomId: NeedInfo.roomId})
         .success(function (res) {
             if (res.success) {
                 window.chatRoom = new ChatRoom(res.result, protocol, ws_options)
-            } else {
-                layer.alert('聊天室初始化失败')
-                document.write('')
             }
+            NeedInfo.getting = false
         })
         .error(function () {
-            layer.alert('聊天室初始化失败', function () {
-                document.write('')
-            })
+            NeedInfo.getting = false
         })
 }
 
@@ -120,9 +119,9 @@ function getTpl(data) {
             //发送时间
             var userInfo = '<p class="msg-detail"><span class="user-name">' + data.userName + '&nbsp;</span> <span class="time">' + data.messageTime + '</span></p>'
             otherMsg.push(userInfo)
-            otherMsg.push('<p class="msg-content" oncontextmenu="reCallOtherContextMenu(\'' + data.messageId + '\')">')
+            otherMsg.push('<div class="msg-content" oncontextmenu="reCallOtherContextMenu(\'' + data.messageId + '\')">')
             otherMsg.push(transContent(data.content))
-            otherMsg.push('</p>')
+            otherMsg.push('</div>')
             otherMsg.push('</div></div>')
             return otherMsg.join('')
         case 'redbag':
@@ -167,9 +166,9 @@ function getTpl(data) {
                 '        <p class="msg-detail">' +
                 '            <span class="user-name">' + data.userName + '</span>' +
                 '            <span class="time"> ' + data.messageTime + '</span></p>' +
-                '        <p class="msg-content" oncontextmenu="reCallContextMenu(\'' + data.messageId + '\')">' +
+                '        <div class="msg-content" oncontextmenu="reCallContextMenu(\'' + data.messageId + '\')">' +
                 transContent(data.content) +
-                '        </p>' +
+                '        </div>' +
                 '    </div>' +
                 '</div>'
             return tpl
@@ -223,14 +222,13 @@ function doAtHandler(data, msgInfo) {
     for (var i = 0, l = atList.length; i < l; i++) {
         if (atList[i] == user.userName) {
             if (user.userId !== msgInfo.userId) {
-                $('#at-msg-tips').attr('href', '#' + msgInfo.messageId).html(msgInfo.userName + '@了你').css('transform',' translate3d(0, 0, 0)')
+                $('#at-msg-tips').attr('href', '#' + msgInfo.messageId).html(msgInfo.userName + '@了你').css('transform', ' translate3d(0, 0, 0)')
             }
         }
     }
 }
 
 function clearChatRoomAll() {
-    clearInterval(window.reconnectInterval)
     clearInterval(window.checkInterval)
     clearInterval(window.heartBeatInterval)
 }
@@ -370,40 +368,24 @@ var protocol = {
         clearChatRoomAll()
         //关闭连接
         chatRoom.connecton.close()
-        //清除登陆信息
-        $t.cookie.del('user_info')
     },
     //当前不在聊天室房间内
     S_NOT_IN_ROOM: function () {
         layer.alert('当前不在聊天室房间内')
+        clearChatRoomAll()
     },
     //禁言
     S_FORBID_CHAT: function () {
-        var user = $t.json($t.cookie.get('user_info'))
-        if (user.authority) {
-            for (var i = 0, l = user.authority.length; i < l; i++) {
-                if (user.authority[i] == 'chat:forbidchat') {
-                    return null
-                }
-            }
-        }
-        layer.msg('管理员已开启禁言')
         NeedInfo.forbidChat = true
-        $('#editor').attr('contenteditable', 'false')
-        $('#editor').attr('title', '管理员已开启禁言')
-        $('#editor').css({
-            background: 'rgba(225,225,225,0.8)'
-        })
+        initForbidChat()
     },
     //取消禁言
     S_UNFORBID_CHAT: function () {
-        layer.msg('管理员已关闭禁言')
         NeedInfo.forbidChat = false
-        $('#editor').attr('contenteditable', 'true')
-        $('#editor').attr('title', '')
-        $('#editor').css({
-            background: 'transparent'
-        })
+        initForbidChat()
+        setTimeout(function () {
+            $dom = $('.chat-room-forbiden-tip').fadeOut(500)
+        }, 3000)
     },
     //历史消息
     S_HISTORY_CHAT: function () {
@@ -423,7 +405,7 @@ var protocol = {
         if (this.data.userId == $t.json($t.cookie.get('user_info')).userId) {
             return null
         }
-        var $d = $('.msg-container').find('.' + this.data.messageId)
+        var $d = $('.msg-container').find('.' + this.data.content.messageId)
         $d.html('<p class="re-call-msg"><span class="re-call-text">' + this.data.userName + '撤回了一条消息</span></p>')
     },
     //登录信息失效
@@ -505,5 +487,19 @@ var protocol = {
         //清除cookie
         $t.cookie.del('user_info')
         initLoginStatus()
+    },
+    //该房间需要登录
+    S_ROOM_NEEDLOGIN: function () {
+        layer.alert('该房间需要登录', function () {
+            setTimeout(function () {
+                $('.login-modal-mask').css('display', 'flex')
+            }, 20)
+            layer.closeAll()
+        })
+        clearChatRoomAll()
+    },
+    S_NO_ROOMAUTH_ERROR: function () {
+        layer.msg('没有权限进入该房间')
+        clearChatRoomAll()
     }
 }

@@ -73,7 +73,7 @@
                                 layer.msg('发送成功', { icon: 1, time: 1000 });
                             }
                             else {
-                                layer.msg(data.errorDesc, { icon: 5, time: 1000 });
+                                layer.msg(data.errorDesc, { icon: 5, time: 2000 });
                             }
                         }
                     });

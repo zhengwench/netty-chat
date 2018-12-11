@@ -19,6 +19,7 @@ var jionAllList = document.getElementById('jionAllList');
 var countBox = document.getElementById('countBox');
 var sendRedbag = document.getElementById('sendRedbag');
 var inferBox=document.getElementById('inferBox');
+var infer=document.getElementById('infer');
 var oul = document.getElementById('messageList');
 var userInfo,userId, userName;
 var token = '';
@@ -27,18 +28,22 @@ var count;
 var msgNew = 0;
 var forbidchat=true;
 
+console.log('token:'+$t.cookie.get('chat_token'));
+console.log('user_info:'+$t.cookie.get('user_info'));
 if($t.cookie.get('chat_token')){
     token=$t.cookie.get('chat_token');
     userInfo = $t.json($t.cookie.get('user_info'));
-    userId = userInfo.userId;
-    userName = userInfo.userName;
-    if(userInfo.authority){
-        userInfo.authority.forEach(function (item,index) {
-            if(item=='chat:forbidchat'){
-                forbidchat=false;
-            }
+    if(userInfo){
+        userId = userInfo.userId;
+        userName = userInfo.userName;
+        if(userInfo.authority){
+            userInfo.authority.forEach(function (item,index) {
+                if(item=='chat:forbidchat'){
+                    forbidchat=false;
+                }
 
-        })
+            })
+        }
     }
     document.getElementById('userName').style.display = 'none';
     document.getElementById('indexAvatar').style.display = 'block';
@@ -100,13 +105,13 @@ $("#myPackBtn1,#myPackBtn2").click(function () {
         'display': 'none'
     })
 
-    if (token != undefined && token != null && token != '') {
+    if (token != undefined && token != null && token != ''&&userInfo&&userInfo!=null) {
         packList.innerHTML='';
         pullupRefresh();
     }
     $("#myPackPage").show();
 })
-//打开和关闭新页面和弹窗
+//打开和关闭新页面
 function myPackClose() {
     $("#myPackPage").hide();
 }
@@ -122,8 +127,10 @@ function userPhotoClose() {
 function userPassClose() {
     $("#userPassPage").hide();
 }
+function loginClose() {
+    $("#loginPage").hide();
+}
 function loginPageFun() {
-    $("#mask1").show();
     $("#loginPage").show();
 }
 function userInfoPageFun() {
@@ -155,10 +162,32 @@ $("#mask").click(function () {
         'display': 'none'
     })
 })
-$("#mask1").click(function () {
-    $("#mask1").hide();
-    $("#loginPage").hide();
-})
+window.onbeforeunload = function () {
+    if(websocket){
+        websocket.close();
+    }
+}
+//退出登录
+function  loginout() {
+    var btnArray = ['否', '是'];
+    mui.confirm('你确定退出登录吗？', '', btnArray, function(e) {
+        if (e.index == 1) {
+            $t.cookie.del('user_info');
+            $t.cookie.del('chat_token');
+            reConnect = false;
+            websocket.close();
+            //与服务器断开连接
+            websocket.onclose = function (event) {
+                console.log("已经与服务器断开连接当前连接状态：" + this.readyState);
+            };
+
+        } else {
+        }
+    })
+
+
+}
+
 //文字横向滚动
 function ScrollImgLeft() {
     var speed = 50; //初始化速度 也就是字体的整体滚动速度
@@ -329,12 +358,38 @@ $("#modal-weixin-share").click(function () {
 
 ScrollImgLeft();
 window.onload = function () {
+    // 阻止双击放大
+    var lastTouchEnd = 0;
+    document.addEventListener('touchstart', function(event) {
+        if (event.touches.length > 1) {
+            event.preventDefault();
+        }
+    });
+    document.addEventListener('touchend', function(event) {
+        var now = (new Date()).getTime();
+        if (now - lastTouchEnd <= 300) {
+            event.preventDefault();
+        }
+        lastTouchEnd = now;
+    }, false);
+
+    // 阻止双指放大
+    document.addEventListener('gesturestart', function(event) {
+        event.preventDefault();
+    });
+
     connectSocket();
     reConnectSocket();
 }
 
+var getting=false;
 //链接websoket;
 function connectSocket() {
+    //如果ajax未完成则等待完成
+    if (getting) {
+        return null
+    }
+    getting=true;
     $.ajax(webSocketUrlPort, {
         data: {
             roomId:roomId
@@ -344,6 +399,7 @@ function connectSocket() {
         timeout: 10000,
         success: function (data) {
             console.log(data);
+            getting=false;
             if (data.success) {
                 webSocketUrl = data.result;
                 if (!window.WebSocket && !window.WebSocket.prototype.send) {
@@ -399,6 +455,7 @@ function connectSocket() {
             }
         },
         error: function (xhr, type, errorThrown) {
+            getting=false;
         }
     });
 
@@ -408,18 +465,21 @@ function connectSocket() {
 //心跳发送
 function heartConnect() {
     setTimeout(function () {
-        //发送心跳消息
-        var payload = {
-            "command": "C_HEART_BEAT",
-            "domain": domain,
-            "roomId": roomId
-        };
-        var jStr = JSON.stringify(payload);
-        if (websocket && websocket.readyState == 1) {
-            websocket.send(jStr)
+        if(reConnect){
+            //发送心跳消息
+            var payload = {
+                "command": "C_HEART_BEAT",
+                "domain": domain,
+                "roomId": roomId
+            };
+            var jStr = JSON.stringify(payload);
+            if (websocket && websocket.readyState == 1) {
+                websocket.send(jStr)
+            }
+
+            heartConnect();
         }
 
-        heartConnect();
     }, 30000);
 }
 
@@ -433,7 +493,9 @@ function reConnectSocket() {
                 console.log("重新连接成功！");
             }
         }
-        reConnectSocket();
+        if(reConnect){
+            reConnectSocket();
+        }
     }, 5000);
 }
 
@@ -463,9 +525,7 @@ function faceFun() {
     shareList.style.display = "none";
     oprateBox.style.display = "none";
 }
-function inferFun(){//@滚动到某条消息
-    window.location.hash = "#abc";
-}
+
 
 //获取聊天室人数
 $.ajax(onlineUser, {
@@ -511,6 +571,46 @@ function scrollToBottom() {
     }, 200)
 }
 
+//@消息的处理
+function doAtHandler(data, msgInfo) {
+
+    var pattern1 = /^([\w&#;]+?)\s.*/g
+    var pattern2 = /^([\w&#;]+?)&nbsp;.*/g
+    var splitData = data.split('@')
+    var atList = []
+    if (splitData.length < 1) {
+        return null
+    }
+    for (var i = 1, l = splitData.length; i < l; i++) {
+        var r1 = pattern1.exec(splitData[i])
+        var r2 = pattern2.exec(splitData[i])
+        if (r1) {
+            atList.push(r1[1])
+        }
+        if (r2) {
+            atList.push(r2[1].replace('&nbsp;', ''))
+        }
+    }
+    console.log('atList:', atList)
+    //获取用户信息
+    if (!userInfo) {
+        return null
+    }
+    //循环信息
+    for (var i = 0, l = atList.length; i < l; i++) {
+        if (atList[i] == userInfo.userName) {
+            if (userId !== msgInfo.userId) {
+               $("#infer").show();
+            }
+        }
+    }
+}
+
+function inferFun(){//@滚动到某条消息
+    var atId= $("#infer").attr("data-mess");
+    window.location.hash = atId;
+    $("#infer").hide();
+}
 
 //接收到消息的回调方法
 var oimg;
@@ -563,7 +663,7 @@ function message(event) {
                             if (item.userIcon && item.userIcon.match(/userIcon.*?/g)) {
                                 oimg = '<div  class="leftAvatar  userIcon  ' + item.userIcon + '" ></div>';
                             } else {
-                                oimg = '<img class="rightAvatar" src="' + avatar + '" />';
+                                oimg = '<img class="leftAvatar" src="' + avatar + '" />';
                             }
                             odiv.className = 'leftRecieve flex flexStart';
                             odiv.innerHTML = '<div class="reciever">' +
@@ -663,8 +763,7 @@ function message(event) {
 
             //打开页面判断聊天室是否禁言
             if(forbidstatus){
-                var odiv = '<div  class="forbidden forbiddenYes">聊天室已开启禁言</div>';
-                oul.innerHTML += odiv;
+                $("#forbiddenYes").show();
             }
 
             scrollToBottom();
@@ -708,6 +807,10 @@ function message(event) {
                     document.getElementById('text').innerHTML = '';
                     faceList.style.display = "none";
                 } else {
+                    doAtHandler(a,a );
+                    if(infer.style.display=='block'){
+                        $("#infer").attr("data-mess",data.messageId);
+                    }
                     if (data.userIcon && data.userIcon.match(/userIcon.*?/g)) {
                         oimg = '<div  class="leftAvatar  userIcon  ' + data.userIcon + '" ></div>';
                     } else {
@@ -726,13 +829,17 @@ function message(event) {
                         '</div>' +
                         '</div>' +
                         '</div>';
-                    newMessageFun();
                 }
 
                 faceList.style.display = 'none';
                 shareList.style.display = 'none';
                 oprateBox.style.display = 'none';
                 oul.appendChild(odiv);
+                if (data.userId == userId) {
+                    scrollToBottom();
+                }else{
+                    newMessageFun();
+                }
                 $("img").on("error", function () {
                     var Loadsrc=$(this).attr('src');
                     $(this).attr('imgError',true);
@@ -813,8 +920,10 @@ function message(event) {
                 reConnect = false;
                 $t.cookie.del('user_info');
                 $t.cookie.del('chat_token');
+                reConnect = false;
+                websocket.close();
                 console.log('登录信息失效')
-                location.reload();
+                //location.reload();
              break;
 
             //游客该ip已在别处登陆
@@ -831,7 +940,11 @@ function message(event) {
                 $t.cookie.del('chat_token');
                 reConnect = false;
                 mui.alert('您的账号已在另外设备登录', '', function () {
-                    location.reload();
+                     $t.cookie.del('user_info');
+                     $t.cookie.del('chat_token');
+                    reConnect = false;
+                    websocket.close();
+                   // location.reload();
                 });
                 console.log('您的账号已在另外设备登录');
             break;
@@ -867,28 +980,45 @@ function message(event) {
                 $t.cookie.del('user_info');
                 $t.cookie.del('chat_token');
                 reConnect = false;
+                websocket.close();
                 mui.alert('ip已加入黑名单，请联系客服', '', function () {
                 });
             break;
 
+            //该房间需要登录
+            case ' S_ROOM_NEEDLOGIN':
+            reConnect = false;
+            mui.alert('该房间需要登录', '', function () {
+                $("#loginPage").show();
+            });
+            break;
+
+            //没有进入该房间权限
+            case ' S_ROOM_ERROR':
+            reConnect = false;
+            mui.alert('没有进入该房间权限', '', function () {
+            });
+            break;
+
+
             //聊天室开启禁言
             case 'S_FORBID_CHAT':
                 forbidstatus = true;
-                var odiv = '<div  class="forbidden forbiddenYes">聊天室已开启禁言</div>';
-                oul.innerHTML += odiv;
-                scrollToBottom();
+                $("#forbiddenYes").show();
             break;
 
             //聊天室关闭禁言
             case 'S_UNFORBID_CHAT':
                 forbidstatus = false;
-                var odiv = ' <div  class="forbidden forbiddenNo">聊天室已关闭禁言</div>';
-                oul.innerHTML += odiv;
-                scrollToBottom();
+                $("#forbiddenYes").hide();
+                $("#forbiddenNo").show();
+                setTimeout(function () {
+                    $("#forbiddenNo").hide();
+                },2000)
             break;
 
             //撤回消息
-            case 'S_UNFORBID_CHAT':
+            case 'S_RECALL_MESSAGE':
                 $("#" + data.content.messageId + "").remove();
                 var odiv = ' <div  class="revert">' + data.userName + '撤回一条消息</div>';
                 oul.innerHTML += odiv;
@@ -902,6 +1032,7 @@ function message(event) {
                     $t.cookie.del('user_info');
                     $t.cookie.del('chat_token');
                     reConnect = false;
+                    websocket.close();
                     // location.reload();
                 });
             break;
@@ -965,9 +1096,8 @@ function newMessageFun() {
     var offsetHeight = oul.offsetHeight;
     var nScrollHight = oul.scrollHeight;
     var nScrollTop = oul.scrollTop;
-    if (offsetHeight + nScrollTop > nScrollHight) {
-//             oul.scrollTop = oul.scrollHeight;
-//             $('.newMessage').css('display', 'none');
+    if (offsetHeight + nScrollTop >= nScrollHight-80) {
+        scrollToBottom();
     } else {
         msgNew++;
         $('.newMessage').css('display', 'block');
@@ -995,10 +1125,10 @@ $("#messageList").scroll(function () {
 });
 //判断是否登录
 function isLogin() {
-    if (token == undefined || token == null || token == '') {
+    if (token == undefined || token == null || token == ''|| !userInfo||userInfo==null) {
         mui.toast("需先登录才能发送消息哦~");
         setTimeout(function () {
-            window.location = '/chat/mlogin';
+            $("#loginPage").show();
         }, 800)
     }
 }
@@ -1037,13 +1167,17 @@ $(".big_img").on("click",
 
     });
 
+// pc大图方法
+function showBigImg(){
+
+}
 
 //发送图片
 document.getElementById("sendImg").onchange = function (evt) {
-    if (token == undefined || token == null || token == '') {
+    if (token == undefined || token == null || token == ''|| !userInfo||userInfo==null) {
         mui.toast('要先登录才能发送图片哦~')
         setTimeout(function () {
-            window.location = '/chat/mlogin';
+            $("#loginPage").show();
         }, 1000);
         return;
     }
@@ -1139,10 +1273,10 @@ function entitiestoUtf16(str){
 }
 //发送消息
 function send() {
-    if (token == undefined || token == null || token == '') {
+    if (token == undefined || token == null || token == ''||!userInfo||userInfo==null) {
         mui.toast('要先登录才能发送消息哦~')
         setTimeout(function () {
-            window.location = '/chat/mlogin';
+            $("#loginPage").show();
         }, 1000);
         return;
     }
@@ -1182,7 +1316,7 @@ function send() {
 
 //领取红包
 function getPack(redbagId) {
-    if (token == undefined || token == null || token == '') {
+    if (token == undefined || token == null || token == ''||!userInfo||userInfo==null) {
         mui.toast("需先登录才能领取红包哦~")
         return;
     }
@@ -1250,7 +1384,7 @@ mui.init({
 
 //上拉加载更多具体实现
 function pullupRefresh() {
-        if (token != undefined && token != null && token != '') {
+        if (token != undefined && token != null && token != ''&&userInfo) {
             if(iDisplayStart>1){
                 setTimeout(function() {
                     receiveRedBagFun();
@@ -1290,6 +1424,8 @@ function loginSubmit(){
                 mui.toast('登录成功');
                 $t.cookie.set('user_info', JSON.stringify(data.result), 'd30');
                 $t.cookie.set('chat_token', data.result.token, 'd30');
+
+                $t.cookie.set('user_info', JSON.stringify(data.result), 'd30')
                 setTimeout(function(){
                     location.reload();
                 },1000)
@@ -1438,7 +1574,7 @@ var userNameBox2 = $("#userNameBox2");
 var oldPassword = document.getElementById("oldPassword");
 var firstPassword = document.getElementById("firstPassword");
 var secondPassword = document.getElementById("secondPassword");
-if (token != undefined && token != null && token != '') {
+if (token != undefined && token != null && token != ''&&userInfo&&userInfo!=null) {
     userName = userInfo.userName;
     userNameBox2.html(userName);
 }
@@ -1636,12 +1772,12 @@ function pasteHandler() {
 
         valiHTML = ["br"];
 
-
-        if (!$.browser.mozilla) {
-
-            content = content.replace(/\r?\n/gi, "<br>");
-
-        }
+        //
+        // if (!$.browser.mozilla) {
+        //
+        //     content = content.replace(/\r?\n/gi, "<br>");
+        //
+        // }
 
         document.getElementById("text").innerHTML = content;
 

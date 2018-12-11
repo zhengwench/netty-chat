@@ -5,7 +5,7 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>${map["web_name"]!''}</title>
-    <link rel="icon" href="/resources/chat/pc/favicon.ico" type="image/x-icon" />
+    <link rel="icon" href="/resources/chat/pc/favicon.ico" type="image/x-icon"/>
     <link rel="shortcut icon" href="/resources/chat/pc/favicon.ico" type="image/x-icon"/>
     <link rel="stylesheet" type="text/css" href="/resources/chat/pc/css/reset.css"/>
     <link rel="stylesheet" href="/resources/chat/pc/css/hidescroll.css">
@@ -33,13 +33,16 @@
                     </div>
                 </a>
             </li>
-            <li><a href="${map["web_url"]!''}" target="_blank"><img src="/resources/chat/pc/images/caipiao.png">&nbsp;彩票官网</a></li>
-            <li><a target="_blank" href="javascript:void();"><img src="/resources/chat/pc/images/help.png">&nbsp;帮助中心</a></li>
+            <#if topmenu?exists>
+                <#list topmenu as r>
+                    <li><a href="${r.sysValue!''}" target="_blank">&nbsp;${r.remark!''}</a></li>
+                </#list>
+            </#if>
         </ul>
-        <a id="login" class="login" href="javascript:void();">登录</a>
+        <a id="login" class="login" href="javascript:;" target="_self">登录</a>
         <div class="nav-user-info">
             <span id="nav-username"></span>
-            <a href="javascript:;" id="nav-logout">退出</a>
+            <a href="javascript:return false;" id="nav-logout" target="_self">退出</a>
         </div>
     </div>
     <div class="body">
@@ -88,13 +91,19 @@
                 <a href="#userid" target="_self" id="at-msg-tips" class="at-msg-tips"></a>
                 <ul class="float-right-tools">
                     <li>
-                        <a href="javascript:void();" id="clear-content">
+                        <a href="javascript:;" id="clear-content">
                             <img src="/resources/chat/pc/images/clear.png">
                             <span>清屏</span>
                         </a>
                     </li>
                     <li>
-                        <a href="javascript:void();" id="change-theme">
+                        <a id="scroll-bottom" href="javascript:;">
+                            <img width="44" src="/resources/chat/pc/images/arrow-bottom-l.png">
+                            <span>底部</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:;" id="change-theme">
                             <img src="/resources/chat/pc/images/change-theme.png">
                             <span>换肤</span>
                         </a>
@@ -106,7 +115,7 @@
                         </a>
                     </li>
                     <li>
-                        <a id="show-my-redbag" href="javascript:void();">
+                        <a id="show-my-redbag" href="javascript:;">
                             <img src="/resources/chat/pc/images/red-pack.png">
                             <span>红包</span>
                         </a>
@@ -114,32 +123,35 @@
                 </ul>
                 <div class="msg-container scroll_content">
                 </div>
-                <div class="have-more-message btn">收到<span id="new-msg-count">0</span>新消息</div>
+                <div class="have-more-message btn">收到<span id="new-msg-count">0</span>条新消息</div>
                 <div id="middle-join-room-container" class="middle-join-room-container">
                 </div>
             </div>
             <div class="wirte-container">
                 <div class="write-container-menu">
+                    <div class="chat-room-forbiden-tip">
+                        <img src="/resources/chat/pc/images/non-forbid.png" height="28"><span></span>
+                    </div>
                     <ul>
                         <li>
-                            <a class="smile" href="javascript:void(0);">
+                            <a class="smile" href="javascript:;">
                                 <img src="/resources/chat/pc/images/select-emji.png">
                             </a>
                         </li>
                         <li>
-                            <a class="select-pic" href="javascript:void(0);">
+                            <a class="select-pic" href="javascript:;">
                                 <img id="sendImg" src="/resources/chat/pc/images/select-pic.png">
                             </a>
                             <input type="file" onchange="sendPictureContent(this)" id="sendImgBtn">
                         </li>
                         <li class="share-li">
-                            <a class="share" href="javascript:void(0);">
+                            <a class="share" href="javascript:;">
                                 <img src="/resources/chat/pc/images/share.png">
                             </a>
                             <div class="share-container">
                                 <ul>
                                     <li>
-                                        <a title="分享到微信朋友圈" onclick="showWxModal()" href="javascript:void(0)"
+                                        <a title="分享到微信朋友圈" onclick="showWxModal()" href="javascript:;"
                                            class="bds_weixin">
                                             <img src="/resources/chat/pc/images/share_weichat.png"/>
                                             <span>朋友圈</span>
@@ -149,7 +161,7 @@
                                         </div>
                                     </li>
                                     <li>
-                                        <a onclick="showWxModal()" title="分享给微信朋友" href="javascript:void(0)"
+                                        <a onclick="showWxModal()" title="分享给微信朋友" href="javascript:;"
                                            class="bds_weixin">
                                             <img src="/resources/chat/pc/images/share_weichat_friend.png"/>
                                             <span>微信朋友</span>
@@ -158,14 +170,14 @@
                                         </div>
                                     </li>
                                     <li>
-                                        <a title="分享到QQ好友" href="javascript:void(0)" class="share_qq"
+                                        <a title="分享到QQ好友" href="javascript:;" class="share_qq"
                                            onclick="shareToqq(event)">
                                             <img src="/resources/chat/pc/images/share_qq_friend.png"/>
                                             <span>QQ好友</span>
                                         </a>
                                     </li>
                                     <li>
-                                        <a title="分享到QQ空间" href="javascript:void(0)" class="share_qzone"
+                                        <a title="分享到QQ空间" href="javascript:;" class="share_qzone"
                                            onclick="shareToQzone(event)">
                                             <img src="/resources/chat/pc/images/share_qq_zone.png"/>
                                             <span>QQ空间</span>
@@ -192,7 +204,7 @@
             <div class="tab-bar">
                 <#if tabmenu?exists>
                     <#list tabmenu as r>
-                         <a target="tabbar" href="${r.sysValue!''}">${r.remark!''}</a>
+                        <a data-tabid="${r.id!''}" target="tabbar" href="${r.sysValue!''}">${r.remark!''}</a>
                     </#list>
                 </#if>
             </div>
@@ -376,7 +388,8 @@
         roomId: ${room.id!''},
         forbidChat: ${room.forbidStatus!'0'?number}, //是否禁言状态
         autoScroll: true,
-        showHaveMoreMessage: false
+        showHaveMoreMessage: false,
+        getting: false
     }
 
     /**
@@ -384,7 +397,6 @@
      */
     var ws_options = {
         reconnect: true, //是否重连 默认true 可选
-        reconnectInterval: 30, //重连间隔（秒）默认30秒重连一次 可选
         heartBeat: true, //是否发送心跳 默认true 可选
         heartBeatInterval: 30, // 心跳间隔 默认30秒发送一次心跳 可选
         checkStatus: true, //状态检测 默认true 可选

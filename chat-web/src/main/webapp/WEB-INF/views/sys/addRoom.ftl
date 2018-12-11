@@ -86,7 +86,7 @@
                         $('#roomLogoUploadSrc').attr("src", data.result.result);
                     }
                     else {
-                        layer.msg(data.result.errorDesc, { icon: 5, time: 1000 });
+                        layer.msg(data.result.errorDesc, { icon: 5, time: 2000 });
                     }
                 }
             });
@@ -99,7 +99,7 @@
                         $('#roomPcBgUploadSrc').attr("src", data.result.result);
                     }
                     else {
-                        layer.msg(data.result.errorDesc, { icon: 5, time: 1000 });
+                        layer.msg(data.result.errorDesc, { icon: 5, time: 2000 });
                     }
                 }
             });
@@ -112,7 +112,7 @@
                         $('#roomMobileBgUploadSrc').attr("src", data.result.result);
                     }
                     else {
-                        layer.msg(data.result.errorDesc, { icon: 5, time: 1000 });
+                        layer.msg(data.result.errorDesc, { icon: 5, time: 2000 });
                     }
                 }
             });
@@ -159,7 +159,7 @@
                                 window.parent.location.reload();
                             }
                             else {
-                                layer.msg(data.errorDesc, { icon: 5, time: 1000 });
+                                layer.msg(data.errorDesc, { icon: 5, time: 2000 });
                             }
                         }
                     });
