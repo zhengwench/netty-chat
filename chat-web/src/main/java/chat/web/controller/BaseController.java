@@ -8,6 +8,8 @@ import chat.core.db.manager.UserManager;
 import chat.core.db.model.DomainConfig;
 import chat.core.db.model.User;
 import chat.web.auth.SysAuthUser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -24,6 +26,7 @@ import static org.springframework.http.HttpHeaders.HOST;
  * @date 2018/11/6 14:01
  */
 public class BaseController {
+    private Logger logger = LoggerFactory.getLogger(BaseController.class);
     @Autowired
     private DomainConfigManager domainConfigManager;
 
@@ -37,7 +40,8 @@ public class BaseController {
         DomainConfig domainConfig = domainConfigManager.queryByDomainName(domain);
         if (domainConfig == null || domainConfig.getStatus() != 1 || new Date().after(domainConfig.getEndTime()) ||
                 new Date().before(domainConfig.getStartTime())) {
-            throw new ManagerException("【" + domain + "】" + AppConfig.DomainError);
+            logger.error("【" + domain + "】" + AppConfig.DomainError);
+            throw new ManagerException(AppConfig.DomainError);
         }
         return domainConfig;
     }
@@ -82,5 +86,4 @@ public class BaseController {
         String aa = UUID.randomUUID().toString().replace("-","");
         System.out.print("aaa:"+aa);
     }
-
 }

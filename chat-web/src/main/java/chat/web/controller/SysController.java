@@ -249,7 +249,7 @@ public class SysController extends BaseController {
 
     @SysAuth(rule = "sys:addUser")
     @RequestMapping(value = "/addUser")
-    public String addUser(Model model, Long id) {
+    public String addUser(Model model,Long id) {
         DomainConfig domainConfig = getDomainConfig();
         List<Role> roles = roleManager.queryList(domainConfig.getId());
         model.addAttribute("roles", roles);
@@ -279,6 +279,7 @@ public class SysController extends BaseController {
                 return resultDo;
             }
             old.setUserName(user.getUserName());
+            old.setRoomId(user.getRoomId());
             old.setRemark(user.getRemark());
             resultDo.setSuccess(userManager.update(old));
             return resultDo;
@@ -286,6 +287,10 @@ public class SysController extends BaseController {
         User insert = userManager.queryByUserName(user.getUserName(),domainConfig.getId());
         if (insert != null){
             resultDo.setErrorDesc("用户名已存在");
+            return resultDo;
+        }
+        if (StringUtils.isEmpty(user.getPassword())){
+            resultDo.setErrorDesc("密码为空");
             return resultDo;
         }
         insert = new User();
@@ -306,16 +311,21 @@ public class SysController extends BaseController {
 
     @SysAuth(rule = "sys:updateUserPassword")
     @RequestMapping(value = "/updateUserPassword")
-    public String updateUserPassword(Model model, Long id){
+    public String updateUserPassword(Model model,Long id){
         DomainConfig domainConfig = getDomainConfig();
         model.addAttribute("id",id);
         return "/sys/updateUserPassword";
     }
 
+    @ResponseBody
     @SysAuth(rule = "sys:updateUserPassword")
     @RequestMapping(value = "/saveUserPassword")
     public ResultDo saveUserPassword(Long id,String password){
         ResultDo resultDo = new ResultDo();
+        if (StringUtils.isEmpty(password)){
+            resultDo.setErrorDesc("密码为空");
+            return resultDo;
+        }
         DomainConfig domainConfig = getDomainConfig();
         User user = userManager.queryByDomainIdAndId(id,domainConfig.getId());
         if (user==null){
@@ -329,7 +339,7 @@ public class SysController extends BaseController {
 
     @SysAuth(rule = "sys:updateUserRole")
     @RequestMapping(value = "/updateUserRole")
-    public String updateUserRole(Model model, Long id){
+    public String updateUserRole(Model model,Long id){
         DomainConfig domainConfig = getDomainConfig();
         List<Role> roles = roleManager.queryList(domainConfig.getId());
         model.addAttribute("roles", roles);
@@ -424,7 +434,7 @@ public class SysController extends BaseController {
 
     @SysAuth(rule = "sys:addRole")
     @RequestMapping(value = "/addRole")
-    public String addRole(Model model, Long id) {
+    public String addRole(Model model,Long id) {
         DomainConfig domainConfig = getDomainConfig();
         Role role = roleManager.queryByIdAndDomainId(id,domainConfig.getId());
         if (role == null){
@@ -476,9 +486,20 @@ public class SysController extends BaseController {
     @ResponseBody
     @SysAuth(rule = "sys:removeRole")
     @RequestMapping(value = "/removeRole")
-    public ResultDo removeRole(Role role) {
+    public ResultDo removeRole(Long id) {
         ResultDo resultDo = new ResultDo();
         DomainConfig domainConfig = getDomainConfig();
+        Role role = roleManager.queryByIdAndDomainId(id,domainConfig.getId());
+        if (role==null){
+            resultDo.setErrorDesc("数据有误");
+            return resultDo;
+        }
+        int count = userManager.queryByRoleId(id);
+        if (count>0){
+            resultDo.setErrorDesc("该角色还有会员，请将会员移除该角色");
+            return resultDo;
+        }
+        resultDo.setSuccess(roleManager.remove(id));
         return resultDo;
     }
 
@@ -553,7 +574,7 @@ public class SysController extends BaseController {
 
     @SysAuth(rule = "sys:exchangeRedbag")
     @RequestMapping(value = "/exchangeRedbag")
-    public String exchangeRedbag(Model model, Long receiveId){
+    public String exchangeRedbag(Model model,Long receiveId){
         model.addAttribute("receiveId",receiveId);
         return "/sys/exchangeRedbag";
     }
@@ -646,7 +667,7 @@ public class SysController extends BaseController {
 
     @SysAuth(rule = "sys:addRoom")
     @RequestMapping(value = "/addRoom")
-    public String addRoom(Model model, Long id){
+    public String addRoom(Model model,Long id){
         DomainConfig domainConfig = getDomainConfig();
         logger.error("id:"+id);
         Room room = roomManager.queryByIdAndDomainId(id,domainConfig.getId());
@@ -681,6 +702,7 @@ public class SysController extends BaseController {
         Room insert = new Room();
         insert.setDomainId(domainConfig.getId());
         insert.setRoomName(room.getRoomName());
+        insert.setRoomType(2);
         insert.setForbidStatus(0);
         insert.setOpenRoom(room.getOpenRoom());
 //        insert.setRoomLogo(room.getRoomLogo());
@@ -738,7 +760,7 @@ public class SysController extends BaseController {
 
     @SysAuth(rule = "sys:addTabMenu")
     @RequestMapping(value = "/addTabMenu")
-    public String addTabMenu(Model model, Long id){
+    public String addTabMenu(Model model,Long id){
         DomainConfig domainConfig = getDomainConfig();
         SystemDict systemDict = systemDictManager.queryById(id,domainConfig.getId());
         if (systemDict == null){

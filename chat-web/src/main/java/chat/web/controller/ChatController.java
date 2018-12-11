@@ -8,6 +8,7 @@ import chat.core.common.upload.AliyunOssManager;
 import chat.core.common.utility.DateUtils;
 import chat.core.common.utility.Md5Manager;
 import chat.core.db.manager.ReceiveRedbagManager;
+import chat.core.db.manager.RoleManager;
 import chat.core.db.manager.RoomManager;
 import chat.core.db.manager.SystemDictManager;
 import chat.core.db.manager.UserManager;
@@ -64,6 +65,9 @@ public class ChatController extends BaseController {
     private SystemDictManager systemDictManager;
 
     @Autowired
+    private RoleManager roleManager;
+
+    @Autowired
     private MultipartResolver multipartResolver;
 
     @RequestMapping(value = "/demo")
@@ -95,31 +99,35 @@ public class ChatController extends BaseController {
         Room room = null;
         if (roomId>0){
             room = roomManager.queryByIdAndDomainId(roomId,domainConfig.getId());
-            if (room == null) {
-                model.addAttribute("msg","房间不存在");
-                return "/chat/error";
-            }
-            if (room.getOpenRoom()==2){
-                User user = getUserInfo(domainConfig.getId());
-                if (user == null){
-                    model.addAttribute("msg","没有权限进入该房间");
-                    return "/chat/error";
-                }
-                if (!user.getRoomId().equals(room.getId())){
-                    model.addAttribute("msg","没有权限进入该房间");
-                    return "/chat/error";
-                }
-            }
         }else {
             room = roomManager.queryDefaultRoom(domainConfig.getId());
-            if (room == null) {
-                model.addAttribute("msg","房间数据有误");
-                return "/chat/error";
+        }
+        if (room == null) {
+            model.addAttribute("msg","房间不存在");
+            return "/500";
+        }
+        if (2 == room.getOpenRoom().intValue()){
+            User user = getUserInfo(domainConfig.getId());
+            if (user == null){
+                model.addAttribute("msg","该房间需要登录");
+                return "/500";
+            }
+
+            if (!user.getRoomId().equals(room.getId())){
+                boolean every = roleManager.queryRolePermAndAuthority(user.getRoleId(),"chat:everyroom");
+                if (!every){
+                    logger.error("用户【"+user.getUserName()+"】所属房间:"+user.getRoomId());
+                    model.addAttribute("msg","没有权限进入该房间");
+                    return "/500";
+                }
             }
         }
         //房间信息
         model.addAttribute("domainName", domainConfig.getDomainName());
         model.addAttribute("room", room);
+        //PC头部menu
+        List<SystemDict> topmenu = systemDictManager.queryGroupKey(domainConfig.getId(),AppConfig.TabMenu,AppConfig.PcTopMenu);
+        model.addAttribute("topmenu", topmenu);
         //tab信息
         List<SystemDict> tabmenu = systemDictManager.queryGroupKey(domainConfig.getId(),AppConfig.TabMenu,AppConfig.PcTabMenu);
         model.addAttribute("tabmenu", tabmenu);
@@ -149,26 +157,26 @@ public class ChatController extends BaseController {
         Room room = null;
         if (roomId>0){
             room = roomManager.queryByIdAndDomainId(roomId,domainConfig.getId());
-            if (room == null) {
-                model.addAttribute("msg","房间不存在");
-                return "/chat/error";
-            }
-            if (room.getOpenRoom()==2){
-                User user = getUserInfo(domainConfig.getId());
-                if (user == null){
-                    model.addAttribute("msg","没有权限进入房间");
-                    return "/chat/error";
-                }
-                if (!user.getRoomId().equals(room.getId())){
-                    model.addAttribute("msg","没有权限进入房间");
-                    return "/chat/error";
-                }
-            }
         }else {
             room = roomManager.queryDefaultRoom(domainConfig.getId());
-            if (room == null) {
-                model.addAttribute("msg","房间数据有误");
-                return "/chat/error";
+        }
+        if (room == null) {
+            model.addAttribute("msg","房间不存在");
+            return "/500";
+        }
+        if (2 == room.getOpenRoom().intValue()){
+            User user = getUserInfo(domainConfig.getId());
+            if (user == null){
+                model.addAttribute("msg","该房间需要登录");
+                return "/500";
+            }
+            if (!user.getRoomId().equals(room.getId())){
+                boolean every = roleManager.queryRolePermAndAuthority(user.getRoleId(),"chat:everyroom");
+                if (!every){
+                    logger.error("用户【"+user.getUserName()+"】所属房间:"+user.getRoomId());
+                    model.addAttribute("msg","没有权限进入该房间");
+                    return "/500";
+                }
             }
         }
         //房间信息
@@ -192,14 +200,118 @@ public class ChatController extends BaseController {
         return "/chat/mIndex";
     }
 
-    @RequestMapping(value = "/login")
-    public String login() {
-        return "/chat/login";
+    @ResponseBody
+    @RequestMapping(value = "indexData")
+    public ResultDo index(String token,@RequestParam(value = "roomId",defaultValue = "0") Long roomId){
+        ResultDo resultDo = new ResultDo();
+        DomainConfig domainConfig = getDomainConfig();
+        Room room = null;
+        if (roomId>0){
+            room = roomManager.queryByIdAndDomainId(roomId,domainConfig.getId());
+        }else {
+            room = roomManager.queryDefaultRoom(domainConfig.getId());
+        }
+        if (room == null) {
+            resultDo.setErrorDesc("房间不存在");
+            return resultDo;
+        }
+        if (2 == room.getOpenRoom().intValue()){
+            if (StringUtils.isEmpty(token)){
+                resultDo.setErrorDesc("该房间需要登录");
+                return resultDo;
+            }
+            User user = userManager.queryByDomainIdAndToken(domainConfig.getId(),token);
+            if (user == null){
+                resultDo.setErrorDesc("该房间需要登录");
+                return resultDo;
+            }
+            boolean every = roleManager.queryRolePermAndAuthority(user.getRoleId(),"chat:everyroom");
+            if (!user.getRoomId().equals(room.getId()) && !every){
+                logger.error("用户【"+user.getUserName()+"】所属房间:"+user.getRoomId());
+                resultDo.setErrorDesc("没有权限进入该房间");
+                return resultDo;
+            }
+        }
+        Map resultMap = new HashMap();
+        //房间信息
+        resultMap.put("domainName", domainConfig.getDomainName());
+        resultMap.put("room", room);
+        //PC头部menu
+        List<SystemDict> topmenu = systemDictManager.queryGroupKey(domainConfig.getId(),AppConfig.TabMenu,AppConfig.PcTopMenu);
+        resultMap.put("topmenu", topmenu);
+        //tab信息
+        List<SystemDict> tabmenu = systemDictManager.queryGroupKey(domainConfig.getId(),AppConfig.TabMenu,AppConfig.PcTabMenu);
+        resultMap.put("tabmenu", tabmenu);
+        SystemDict defaultTab = new SystemDict();
+        if (tabmenu!=null && tabmenu.size()>0){
+            defaultTab = tabmenu.get(0);
+        }
+        resultMap.put("defaultTab", defaultTab);
+        //房间列表
+        List<Room> roomList = roomManager.queryList(domainConfig.getId());
+        resultMap.put("roomList", roomList);
+        //网站设置信息
+        List<SystemDict> webset = systemDictManager.queryGroupAllByDomainId(domainConfig.getId(),AppConfig.WebSet);
+        Map<String,String> map = new HashMap<>();
+        if (webset!=null && webset.size()>0){
+            for (SystemDict r : webset){
+                map.put(r.getSysKey(),r.getSysValue());
+            }
+        }
+        resultMap.put("websetmap", map);
+        resultDo.setResult(resultMap);
+        return resultDo;
     }
 
-    @RequestMapping(value = "/mlogin")
-    public String mlogin(Model model) {
-        return "/chat/mlogin";
+    @ResponseBody
+    @RequestMapping(value = "mindexData")
+    public ResultDo mindexData(String token,@RequestParam(value = "roomId",defaultValue = "0") Long roomId){
+        ResultDo resultDo = new ResultDo();
+        DomainConfig domainConfig = getDomainConfig();
+        Room room = null;
+        if (roomId>0){
+            room = roomManager.queryByIdAndDomainId(roomId,domainConfig.getId());
+        }else {
+            room = roomManager.queryDefaultRoom(domainConfig.getId());
+        }
+        if (room == null) {
+            resultDo.setErrorDesc("房间不存在");
+            return resultDo;
+        }
+        if (2 == room.getOpenRoom().intValue()){
+            User user = getUserInfo(domainConfig.getId());
+            if (user == null){
+                resultDo.setErrorDesc("该房间需要登录");
+                return resultDo;
+            }
+            boolean every = roleManager.queryRolePermAndAuthority(user.getRoleId(),"chat:everyroom");
+            if (!user.getRoomId().equals(room.getId()) && !every){
+                logger.error("用户【"+user.getUserName()+"】所属房间:"+user.getRoomId());
+                resultDo.setErrorDesc("没有权限进入该房间");
+                return resultDo;
+            }
+        }
+        Map resultMap = new HashMap();
+        //房间信息
+        resultMap.put("domainName", domainConfig.getDomainName());
+        resultMap.put("room", room);
+        //tab信息
+        List<SystemDict> tabmenu = systemDictManager.queryGroupKey(domainConfig.getId(),AppConfig.TabMenu,AppConfig.MTabMenu);
+        resultMap.put("tabmenu", tabmenu);
+        //房间列表信息
+        List<Room> roomList = roomManager.queryList(domainConfig.getId());
+        resultMap.put("roomList", roomList);
+        //网站设置信息
+        List<SystemDict> webset = systemDictManager.queryGroupAllByDomainId(domainConfig.getId(),AppConfig.WebSet);
+        Map<String,String> map = new HashMap<>();
+        if (webset!=null && webset.size()>0){
+            for (SystemDict r : webset){
+                map.put(r.getSysKey(),r.getSysValue());
+            }
+        }
+        resultMap.put("websetmap", map);
+        resultDo.setResult(resultMap);
+        return resultDo;
     }
 
     @ResponseBody
@@ -476,10 +588,5 @@ public class ChatController extends BaseController {
         } catch (Exception e) {
             return resultDo;
         }
-    }
-
-    @RequestMapping(value = "/404")
-    public String error(){
-        return "/chat/404";
     }
 }

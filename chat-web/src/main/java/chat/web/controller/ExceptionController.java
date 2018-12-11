@@ -19,9 +19,9 @@ public class ExceptionController  {
         return resultDo;
     }
 
-    @RequestMapping(value = "/error")
+    @RequestMapping(value = "/404")
     public String error(){
-        return "/sys/500";
+        return "/404";
     }
 
     @ResponseBody

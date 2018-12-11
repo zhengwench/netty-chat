@@ -37,6 +37,10 @@ public class ExceptionHandler implements HandlerExceptionResolver {
                 modelAndView.addObject("errorDesc", e.getMessage());
                 return modelAndView;
             }
+            modelAndView = new ModelAndView();
+            modelAndView.addObject("msg",e.getMessage());
+            modelAndView.setViewName("/500");
+            return modelAndView;
         }
         logger.error("全局捕获异常", e);
         if (xRequest != null) {
@@ -45,7 +49,7 @@ public class ExceptionHandler implements HandlerExceptionResolver {
             return modelAndView;
         }
         modelAndView = new ModelAndView();
-        modelAndView.setViewName("/sys/404");
+        modelAndView.setViewName("/500");
         return modelAndView;
     }
 }
