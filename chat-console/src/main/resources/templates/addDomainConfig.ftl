@@ -95,20 +95,7 @@
                 rules: {
                     domainName: {
                         required: true,
-                    },
-                    websocketUrl: {
-                        required: true,
-                    },
-                    httpUrl: {
-                        required: true,
-                    },
-                    startTime: {
-                        required: true,
-                    },
-                    endTime: {
-                        required: true,
-                    },
-
+                    }
                 },
                 onkeyup: false,
                 focusCleanup: true,

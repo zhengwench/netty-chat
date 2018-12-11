@@ -33,6 +33,9 @@ function monitorTableList() {
                 'mDataProp': 'websocketPort',
                 'bSortable': false
             }, {
+                'mDataProp': 'remark',
+                'bSortable': false
+            }, {
                 'mDataProp': 'operation',
                 'bSortable': false,
                 'mRender': function (data, type, row) {

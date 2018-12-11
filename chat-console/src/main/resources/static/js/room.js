@@ -21,6 +21,9 @@ function roomTableList() {
         },
         'aoColumns': [
             {
+                'mDataProp': 'id',
+                'bSortable': false
+            }, {
                 'mDataProp': 'roomName',
                 'bSortable': false
             }, {
@@ -42,8 +45,8 @@ function roomTableList() {
 
 function getAllSearchValue(aoData) {
     aoData.push({
-        "name": 'domainId',
-        "value": trimStr($('#domainId').val())
+        "name": 'domain',
+        "value": trimStr($('#domain').val())
     });
 }
 

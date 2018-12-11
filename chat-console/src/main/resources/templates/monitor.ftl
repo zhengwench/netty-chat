@@ -27,6 +27,7 @@
                 <th>服务器域名</th>
                 <th>服务器http端口</th>
                 <th>服务器websocket端口</th>
+                <th>备注</th>
                 <th>操作</th>
             </tr>
             </thead>
