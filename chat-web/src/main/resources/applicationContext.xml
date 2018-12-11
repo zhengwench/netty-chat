@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+		   http://www.springframework.org/schema/beans/spring-beans.xsd
+		   http://www.springframework.org/schema/context
+		   http://www.springframework.org/schema/context/spring-context.xsd
+		   http://www.springframework.org/schema/aop
+		   http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <context:annotation-config/>
+
+    <!-- 强制SPRING使用CGLIB动态代理，不使用JDK代理。 -->
+    <aop:config proxy-target-class="true"/>
+
+    <import resource="classpath:spring-mvc.xml"/>
+    <import resource="classpath*:mybatis/applicationContext-*.xml"/>
+
+    <bean id="authExceptionHandler" class="chat.web.exception.handler.ExceptionHandler"></bean>
+    <context:component-scan base-package="chat.web.auth"></context:component-scan>
+
+    <!--支持aspectj-->
+    <aop:aspectj-autoproxy/>
+
+    <bean id="poolingHttpClientConnectionManager"
+          class="org.apache.http.impl.conn.PoolingHttpClientConnectionManager">
+        <!-- 最大连接数 -->
+        <property name="maxTotal" value="200" />
+        <!-- 设置每个主机的并发数 -->
+        <property name="defaultMaxPerRoute" value="100" />
+    </bean>
+
+    <!-- HttpClient对象的构建器 -->
+    <bean id="httpClientBuilder" class="org.apache.http.impl.client.HttpClientBuilder">
+        <property name="connectionManager" ref="poolingHttpClientConnectionManager" />
+    </bean>
+
+    <!-- HttpClient对象 注意该对象需要设置scope="prototype":多例 -->
+    <bean class="org.apache.http.impl.client.CloseableHttpClient"
+          factory-bean="httpClientBuilder" factory-method="build" scope="prototype" />
+
+    <!-- 请求配置的构建器 -->
+    <bean id="requestConfigBuilder" class="org.apache.http.client.config.RequestConfig.Builder">
+        <!-- 创建连接的最长时间 -->
+        <property name="connectTimeout" value="2000" />
+        <!-- 从连接池中获取到连接的最长时间 -->
+        <property name="connectionRequestTimeout" value="500" />
+        <!-- 数据传输的最长时间 -->
+        <property name="socketTimeout" value="10000" />
+        <!-- 提交请求前测试连接是否可用 -->
+        <property name="staleConnectionCheckEnabled" value="true" />
+    </bean>
+
+    <!-- RequestConfig对象 -->
+    <bean class="org.apache.http.client.config.RequestConfig"
+          factory-bean="requestConfigBuilder" factory-method="build" />
+
+    <bean id="httpRequestClient" class="chat.web.http.HttpRequestClient"/>
+
+    <bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+        <!-- 线程池活跃的线程数 -->
+        <property name="corePoolSize" value="50" />
+        <!-- 线程池最大活跃的线程数 -->
+        <property name="maxPoolSize" value="100" />
+        <!-- 队列的最大容量 -->
+        <property name="queueCapacity" value="100" />
+    </bean>
+</beans>

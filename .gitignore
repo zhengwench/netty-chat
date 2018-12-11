@@ -4,3 +4,7 @@
 /chat-core/*.iml
 /chat-server/*.iml
 /chat-web/*.iml
+/chat-console/target
+/chat-core/target
+/chat-server/target
+/chat-web/target

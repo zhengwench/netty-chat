@@ -1,12 +1,12 @@
 package chat.web.auth;
 
-import com.shuangying.core.common.domain.Constants;
-import com.shuangying.core.db.manager.DomainConfigManager;
-import com.shuangying.core.db.manager.RoleManager;
-import com.shuangying.core.db.manager.UserManager;
-import com.shuangying.core.db.model.DomainConfig;
-import com.shuangying.core.db.model.User;
-import com.shuangying.web.exception.SysAuthException;
+import chat.core.common.domain.Constants;
+import chat.core.db.manager.DomainConfigManager;
+import chat.core.db.manager.RoleManager;
+import chat.core.db.manager.UserManager;
+import chat.core.db.model.DomainConfig;
+import chat.core.db.model.User;
+import chat.web.exception.SysAuthException;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
@@ -36,7 +36,7 @@ public class UserInfoService {
     @Autowired
     private RoleManager roleManager;
 
-    @Pointcut("@annotation(com.shuangying.web.auth.UserInfo)")
+    @Pointcut("@annotation(chat.web.auth.UserInfo)")
     public void methodPointcut(){
 
     }
