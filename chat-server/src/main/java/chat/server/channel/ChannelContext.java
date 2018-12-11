@@ -9,12 +9,21 @@ import java.io.Serializable;
  * @date 2018/11/5 15:11
  */
 public class ChannelContext implements Serializable {
+    private String contextId;
     private String domain;
     private String roomId;
     private String ip;
     private Long userId;
     private String token;
     private Channel channel;
+
+    public String getContextId() {
+        return contextId;
+    }
+
+    public void setContextId(String contextId) {
+        this.contextId = contextId;
+    }
 
     public String getDomain() {
         return domain;

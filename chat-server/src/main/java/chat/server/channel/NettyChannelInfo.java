@@ -5,6 +5,8 @@ package chat.server.channel;
  * @date 2018/11/11 12:52
  */
 public class NettyChannelInfo {
+    private String infoId;
+
     private String userId;
 
     private String domain;
@@ -14,6 +16,16 @@ public class NettyChannelInfo {
     private String zoneKey;
 
     private String contextKey;
+
+    private String token;
+
+    public String getInfoId() {
+        return infoId;
+    }
+
+    public void setInfoId(String infoId) {
+        this.infoId = infoId;
+    }
 
     public String getUserId() {
         return userId;
@@ -55,14 +67,24 @@ public class NettyChannelInfo {
         this.contextKey = contextKey;
     }
 
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
     @Override
     public String toString() {
         return "NettyChannelInfo{" +
-                "userId='" + userId + '\'' +
+                "infoId='" + infoId + '\'' +
+                ", userId='" + userId + '\'' +
                 ", domain='" + domain + '\'' +
                 ", roomId='" + roomId + '\'' +
                 ", zoneKey='" + zoneKey + '\'' +
                 ", contextKey='" + contextKey + '\'' +
+                ", token='" + token + '\'' +
                 '}';
     }
 }

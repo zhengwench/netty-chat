@@ -9,7 +9,7 @@ public enum ServerCommandEnum {
     S_SYSTEM_ERROR("S_SYSTEM_ERROR","系统错误"),
     S_AUTH_ERROR("S_AUTH_ERROR","没有权限"),
 
-    //连接发生协议
+    //连接校验协议
     S_IP_ERROR("S_IP_ERROR","IP错误"),
     S_IP_BLACK("S_IP_BLACK","ip黑名单"),
     S_CONNECT_ERROR("S_CONNECT_ERROR","连接信息信息错误"),
@@ -18,6 +18,8 @@ public enum ServerCommandEnum {
     S_NOT_IN_ROOM("S_NOT_IN_ROOM","当前不在聊天室房间内"),
     S_LOGIN_INFO_LOSE("S_LOGIN_INFO_LOSE","登录信息失效"),
     S_LOGIN_ANOTHER("S_LOGIN_ANOTHER","已在另外设备登录"),
+    S_ROOM_NEEDLOGIN("S_ROOM_NEEDLOGIN","该房间需要登录"),
+    S_NO_ROOMAUTH_ERROR("S_ROOM_ERROR","没有权限进入该房间"),
 
     S_JOIN_ROOM("S_JOIN_ROOM","进入房间"),
     S_MESSAGE("S_MESSAGE","发送消息"),

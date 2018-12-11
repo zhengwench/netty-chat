@@ -155,6 +155,12 @@ public class ChannelContextHandler extends SimpleChannelInboundHandler<Object> {
                 ctx.channel().close();
                 return;
             }
+            //游客无权限进入非开放房间
+            if (2 == room.getOpenRoom().intValue() && StringUtils.isEmpty(token)){
+                messageProcess.connectError(ctx.channel(),ServerCommandEnum.S_ROOM_NEEDLOGIN);
+                ctx.channel().close();
+                return;
+            }
             String userId = null;
             String userName = null;
             String userIcon = null;
@@ -166,6 +172,15 @@ public class ChannelContextHandler extends SimpleChannelInboundHandler<Object> {
                     messageProcess.connectError(ctx.channel(),ServerCommandEnum.S_LOGIN_INFO_LOSE);
                     ctx.channel().close();
                     return;
+                }
+                //非公开房间
+                if (2 == room.getOpenRoom().intValue()){
+                    boolean every = roleManager.queryRolePermAndAuthority(user.getRoleId(),"chat:everyroom");
+                    if (!user.getRoomId().equals(room.getId()) && !every){
+                        messageProcess.connectError(ctx.channel(),ServerCommandEnum.S_NO_ROOMAUTH_ERROR);
+                        ctx.channel().close();
+                        return;
+                    }
                 }
                 try {
                     userManager.updateLoginIp(user.getId(),ip);
@@ -184,13 +199,32 @@ public class ChannelContextHandler extends SimpleChannelInboundHandler<Object> {
                 userId = user.getId()+"";
                 userName = user.getUserName();
                 userIcon = user.getIcon();
-                DomainChannelMap.removeDomainUserContext(domain,user.getId());
-                DomainChannelMap.addChannelContext(domain,roomId,user.getToken(),user.getId(),ip,ctx.channel());
+                //移除房间下的channel
+                //DomainChannelMap.removeDomainRoomUserContext(domain,roomId,user.getId());
+                ChannelContext context = DomainChannelMap.addChannelContext(domain,roomId,user.getToken(),user.getId(),ip,ctx.channel());
+                if (context!=null && context.getChannel()!=null){
+                    logger.error("移除的context信息:context:"+context.getContextId()+";userid:"+context.getUserId()+";token:"+context.getToken()+"");
+                    if (context.getChannel().isActive()){
+                        JSONObject response = new JSONObject();
+                        response.put("messageId", UUID.randomUUID().toString().replace("-", ""));
+                        response.put("command", ServerCommandEnum.S_LOGIN_ANOTHER.getKey());
+                        context.getChannel().writeAndFlush(new TextWebSocketFrame(response.toJSONString()));
+                    }
+                    context.getChannel().close();
+                }
             }else {
                 //游客
-                DomainChannelMap.removeIpChannelContext(domain,ip);
+                //DomainChannelMap.removeRoomIpChannelContext(domain,roomId,ip);
                 userName = randomName();
-                DomainChannelMap.addChannelContext(domain, roomId, null, null, ip, ctx.channel());
+                ChannelContext context = DomainChannelMap.addChannelContext(domain, roomId, null, null, ip, ctx.channel());
+                if (context!=null && context.getChannel()!=null){
+                    if (context.getChannel().isActive()){
+                        JSONObject response = new JSONObject();
+                        response.put("messageId", UUID.randomUUID().toString().replace("-", ""));
+                        response.put("command", ServerCommandEnum.S_IP_ERROR.getKey());
+                        context.getChannel().writeAndFlush(new TextWebSocketFrame(response.toJSONString()));
+                    }
+                }
             }
             JSONObject response = new JSONObject();
             response.put("messageId", UUID.randomUUID().toString().replace("-", ""));
@@ -218,8 +252,7 @@ public class ChannelContextHandler extends SimpleChannelInboundHandler<Object> {
             if (attribute.get()!=null){
                 NettyChannelInfo nettyChannelInfo = attribute.get();
                 ChannelContext channelContext = DomainChannelMap.getAndRemoveSingleChannelContext(nettyChannelInfo.getDomain(),nettyChannelInfo.getRoomId(),
-                        nettyChannelInfo.getZoneKey(),nettyChannelInfo.getContextKey());
-
+                        nettyChannelInfo.getZoneKey(),nettyChannelInfo.getContextKey(),nettyChannelInfo.getInfoId());
 //                if (channelContext!=null){
 //                    JSONObject response = new JSONObject();
 //                    response.put("messageId",UUID.randomUUID().toString().replace("-",""));
@@ -283,8 +316,10 @@ public class ChannelContextHandler extends SimpleChannelInboundHandler<Object> {
             if (attribute.get()!=null) {
                 NettyChannelInfo nettyChannelInfo = attribute.get();
                 ChannelContext channelContext = DomainChannelMap.getAndRemoveSingleChannelContext(nettyChannelInfo.getDomain(),
-                        nettyChannelInfo.getRoomId(), nettyChannelInfo.getZoneKey(),nettyChannelInfo.getContextKey());
-                channelContext.getChannel().close();
+                        nettyChannelInfo.getRoomId(), nettyChannelInfo.getZoneKey(),nettyChannelInfo.getContextKey(),nettyChannelInfo.getInfoId());
+                if (channelContext!=null && channelContext.getChannel()!=null){
+                    channelContext.getChannel().close();
+                }
             }
         } catch (Exception e) {
             logger.error("处理channel异常发生异常",e);

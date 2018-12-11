@@ -221,7 +221,7 @@ public class MessageProcess {
      * @param roomId
      * @param contentStr
      */
-    public void removeChat(Channel channel, String userId, String domain, String roomId, String contentStr) {
+    public void removeChat(Channel channel,String userId, String domain, String roomId, String contentStr) {
         JSONObject content = JSON.parseObject(contentStr);
         String removeIdstr = content.getString("removeId");
 

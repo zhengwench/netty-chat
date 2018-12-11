@@ -43,7 +43,7 @@ public class DomainChannelMap {
      * @param ip
      * @param channel
      */
-    public static void addChannelContext(String domain,String roomId, String token, Long userId, String ip, Channel channel) {
+    public static ChannelContext addChannelContext(String domain,String roomId, String token, Long userId, String ip, Channel channel) {
         RoomChannelMap roomChannelMap = null;
         if (instance().containsKey(domain)) {
             roomChannelMap = instance().get(domain);
@@ -60,8 +60,9 @@ public class DomainChannelMap {
             }
         }
         if (roomChannelMap != null) {
-            roomChannelMap.addRoomContextMap(domain, roomId, token, userId, ip, channel);
+            return roomChannelMap.addRoomContextMap(domain, roomId, token, userId, ip, channel);
         }
+        return null;
     }
 
     /**
@@ -126,27 +127,54 @@ public class DomainChannelMap {
      * @param domain
      * @param userId
      */
-    public static void removeDomainUserContext(String domain,Long userId){
-        RoomChannelMap roomChannelMap = null;
-        if (instance().containsKey(domain)){
-            roomChannelMap = instance().get(domain);
-        }
-        if (roomChannelMap != null){
-            roomChannelMap.removeUserAllContext(userId);
-        }
-    }
+//    public static void removeDomainUserContext(String domain,Long userId){
+//        RoomChannelMap roomChannelMap = null;
+//        if (instance().containsKey(domain)){
+//            roomChannelMap = instance().get(domain);
+//        }
+//        if (roomChannelMap != null){
+//            roomChannelMap.removeUserAllContext(userId);
+//        }
+//    }
+
+    /**
+     * 移除domain下所有用户context
+     * @param domain
+     * @param userId
+     */
+//    public static void removeDomainRoomUserContext(String domain,String roomId,Long userId){
+//        RoomChannelMap roomChannelMap = null;
+//        if (instance().containsKey(domain)){
+//            roomChannelMap = instance().get(domain);
+//        }
+//        if (roomChannelMap != null){
+//            roomChannelMap.removeRoomUserContext(roomId,userId);
+//        }
+//    }
 
     /**
      * 移除游客ip channel
      * @param domain
      * @param ip
      */
-    public static void removeIpChannelContext(String domain,String ip){
-        RoomChannelMap roomChannelMap = DomainChannelMap.getDomainContextMap(domain);
-        if (roomChannelMap!=null){
-            roomChannelMap.removeIpChannelContext(ip);
-        }
-    }
+//    public static void removeIpChannelContext(String domain,String ip){
+//        RoomChannelMap roomChannelMap = DomainChannelMap.getDomainContextMap(domain);
+//        if (roomChannelMap!=null){
+//            roomChannelMap.removeIpChannelContext(ip);
+//        }
+//    }
+
+    /**
+     * 移除房间下游客ip channel
+     * @param domain
+     * @param ip
+     */
+//    public static void removeRoomIpChannelContext(String domain,String roomId,String ip){
+//        RoomChannelMap roomChannelMap = DomainChannelMap.getDomainContextMap(domain);
+//        if (roomChannelMap!=null){
+//            roomChannelMap.removeRoomIpChannelContext(roomId,ip);
+//        }
+//    }
 
     /**
      * 清理Channel上下文
@@ -197,6 +225,13 @@ public class DomainChannelMap {
         return roomChannelMap.getAndRemoveUserAllChannelContext(userId);
     }
 
+    /**
+     * 获取并移除用户房间channel
+     * @param domain
+     * @param roomId
+     * @param userId
+     * @return
+     */
     public static ChannelContext getAndRemoveRoomUserChannelContext(String domain,String roomId, Long userId){
         RoomChannelMap roomChannelMap = null;
         if (instance().containsKey(domain)){
@@ -209,19 +244,19 @@ public class DomainChannelMap {
     }
 
     /**
-     * 移除channel上下文
+     * 移除单个channel上下文
      * @param domain
      * @param roomId
      * @param zoneKey
      * @param contextKey
      */
-    public static ChannelContext getAndRemoveSingleChannelContext(String domain,String roomId,String zoneKey,String contextKey){
+    public static ChannelContext getAndRemoveSingleChannelContext(String domain,String roomId,String zoneKey,String contextKey,String contextId){
         RoomChannelMap roomChannelMap = null;
         if (instance().containsKey(domain)){
             roomChannelMap = instance().get(domain);
         }
         if (roomChannelMap != null){
-            return roomChannelMap.getAndRemoveSingleChannelContext(roomId,zoneKey,contextKey);
+            return roomChannelMap.getAndRemoveSingleChannelContext(roomId,zoneKey,contextKey,contextId);
         }
         return null;
     }

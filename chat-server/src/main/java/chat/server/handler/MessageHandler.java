@@ -49,8 +49,10 @@ public class MessageHandler extends SimpleChannelInboundHandler<TextWebSocketFra
             if (attribute.get()!=null) {
                 NettyChannelInfo nettyChannelInfo = attribute.get();
                 ChannelContext channelContext = DomainChannelMap.getAndRemoveSingleChannelContext(nettyChannelInfo.getDomain(),
-                        nettyChannelInfo.getRoomId(), nettyChannelInfo.getZoneKey(),nettyChannelInfo.getContextKey());
-                channelContext.getChannel().close();
+                        nettyChannelInfo.getRoomId(), nettyChannelInfo.getZoneKey(),nettyChannelInfo.getContextKey(),nettyChannelInfo.getInfoId());
+                if (channelContext!=null && channelContext.getChannel()!=null){
+                    channelContext.getChannel().close();
+                }
             }
         } catch (Exception e) {
             logger.error("处理channel异常发生异常",e);

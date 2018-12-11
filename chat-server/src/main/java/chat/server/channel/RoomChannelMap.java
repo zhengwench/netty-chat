@@ -41,7 +41,7 @@ public class RoomChannelMap {
      * @param ip
      * @param channel
      */
-    public void addRoomContextMap(String domain, String roomId, String token, Long userId, String ip, Channel channel) {
+    public ChannelContext addRoomContextMap(String domain, String roomId, String token, Long userId, String ip, Channel channel) {
         ChannelContextMap contextMap = null;
         Map<String, ChannelContextMap> channelMap = null;
 
@@ -66,13 +66,14 @@ public class RoomChannelMap {
                 roomMap.put(roomId, channelMap);
             }
         }
-        if (channelMap != null) {
+        if (channelMap != null && channelMap.size()>0) {
             String zoneKey = randomZone(ip, userId == null ? null : userId + "");
             contextMap = channelMap.get(zoneKey);
             if (contextMap != null) {
-                contextMap.addChannelContext(domain, roomId, zoneKey, ip, userId, token, channel);
+                return contextMap.addChannelContext(domain, roomId, zoneKey, ip, userId, token, channel);
             }
         }
+        return null;
     }
 
     /**
@@ -105,13 +106,13 @@ public class RoomChannelMap {
             channelMap = roomMap.get(roomId);
         }
         String zoneKey = randomZone(null, userId);
-        if (channelMap != null) {
+        if (channelMap != null && channelMap.size()>0) {
             if (channelMap.containsKey(zoneKey)) {
                 contextMap = channelMap.get(zoneKey);
             }
         }
         if (contextMap != null) {
-            return contextMap.checkToken(token);
+            return contextMap.checkToken(userId,token);
         }
         return false;
     }
@@ -198,29 +199,29 @@ public class RoomChannelMap {
      * @param roomId
      * @param userId
      */
-    public void removeRoomUserIdContext(String roomId, Long userId) {
-        ChannelContextMap contextMap = null;
-        Map<String, ChannelContextMap> channelMap = null;
-        if (roomMap.containsKey(roomId)) {
-            synchronized (this) {
-                if (roomMap.containsKey(roomId)) {
-                    channelMap = roomMap.get(roomId);
-                }
-            }
-        }
-        if (channelMap != null && channelMap.size() > 0) {
-            try {
-                for (String key : channelMap.keySet()) {
-                    contextMap = channelMap.get(key);
-                    if (contextMap != null) {
-                        contextMap.removeUserIdChannelContext(userId);
-                    }
-                }
-            } catch (Exception e) {
-                logger.error("removeRoomUserIdContext异常",e);
-            }
-        }
-    }
+//    public void removeRoomUserIdContext(String roomId, Long userId) {
+//        ChannelContextMap contextMap = null;
+//        Map<String, ChannelContextMap> channelMap = null;
+//        if (roomMap.containsKey(roomId)) {
+//            synchronized (this) {
+//                if (roomMap.containsKey(roomId)) {
+//                    channelMap = roomMap.get(roomId);
+//                }
+//            }
+//        }
+//        if (channelMap != null && channelMap.size() > 0) {
+//            try {
+//                for (String key : channelMap.keySet()) {
+//                    contextMap = channelMap.get(key);
+//                    if (contextMap != null) {
+//                        contextMap.removeUserIdChannelContext(userId);
+//                    }
+//                }
+//            } catch (Exception e) {
+//                logger.error("removeRoomUserIdContext异常",e);
+//            }
+//        }
+//    }
 
     /**
      * 移除房间下用户channel
@@ -228,56 +229,77 @@ public class RoomChannelMap {
      * @param roomId
      * @param ip
      */
-    public void removeRoomIpContext(String roomId, String ip) {
-        ChannelContextMap contextMap = null;
-        Map<String, ChannelContextMap> channelMap = null;
-        if (roomMap.containsKey(roomId)) {
-            synchronized (this) {
-                if (roomMap.containsKey(roomId)) {
-                    channelMap = roomMap.get(roomId);
-                }
-            }
-        }
-        if (channelMap != null) {
-            try {
-                for (String key : channelMap.keySet()) {
-                    contextMap = channelMap.get(key);
-                    if (contextMap != null) {
-                        contextMap.removeIpChannelContext(ip);
-                    }
-                }
-            } catch (Exception e) {
-                logger.error("removeRoomIpContext异常",e);
-            }
-        }
-    }
+//    public void removeRoomIpContext(String roomId, String ip) {
+//        ChannelContextMap contextMap = null;
+//        Map<String, ChannelContextMap> channelMap = null;
+//        if (roomMap.containsKey(roomId)) {
+//            synchronized (this) {
+//                if (roomMap.containsKey(roomId)) {
+//                    channelMap = roomMap.get(roomId);
+//                }
+//            }
+//        }
+//        if (channelMap != null && channelMap.size()>0) {
+//            try {
+//                for (String key : channelMap.keySet()) {
+//                    contextMap = channelMap.get(key);
+//                    if (contextMap != null) {
+//                        contextMap.removeIpChannelContext(ip);
+//                    }
+//                }
+//            } catch (Exception e) {
+//                logger.error("removeRoomIpContext异常",e);
+//            }
+//        }
+//    }
 
     /**
      * 清除ip channel
      * @param ip
      */
-    public void removeIpChannelContext(String ip){
-        Map<String, ChannelContextMap> channelMap = null;
-        ChannelContextMap contextMap = null;
-        String zoneKey = randomZone(ip,null);
-        if (roomMap!=null && roomMap.size()>0){
-            for (String key : roomMap.keySet()){
-                try {
-                    channelMap = roomMap.get(key);
-                    if (channelMap != null) {
-                        if (channelMap.containsKey(zoneKey)) {
-                            contextMap = channelMap.get(zoneKey);
-                        }
-                        if (contextMap!=null){
-                            contextMap.removeIpChannelContext(ip);
-                        }
-                    }
-                } catch (Exception e) {
-                    logger.error("removeIpChannelContext异常",e);
-                }
-            }
-        }
-    }
+//    public void removeIpChannelContext(String ip){
+//        Map<String, ChannelContextMap> channelMap = null;
+//        ChannelContextMap contextMap = null;
+//        String zoneKey = randomZone(ip,null);
+//        if (roomMap!=null && roomMap.size()>0){
+//            for (String key : roomMap.keySet()){
+//                try {
+//                    channelMap = roomMap.get(key);
+//                    if (channelMap != null && channelMap.size()>0) {
+//                        if (channelMap.containsKey(zoneKey)) {
+//                            contextMap = channelMap.get(zoneKey);
+//                        }
+//                        if (contextMap!=null){
+//                            contextMap.removeIpChannelContext(ip);
+//                        }
+//                    }
+//                } catch (Exception e) {
+//                    logger.error("removeIpChannelContext异常",e);
+//                }
+//            }
+//        }
+//    }
+
+    /**
+     * 清除ip channel
+     * @param ip
+     */
+//    public void removeRoomIpChannelContext(String roomId,String ip){
+//        Map<String, ChannelContextMap> channelMap = null;
+//        ChannelContextMap contextMap = null;
+//        String zoneKey = randomZone(ip,null);
+//        if (roomMap!=null && roomMap.size()>0){
+//            channelMap = roomMap.get(roomId);
+//        }
+//        if (channelMap != null && channelMap.size()>0) {
+//            if (channelMap.containsKey(zoneKey)) {
+//                contextMap = channelMap.get(zoneKey);
+//            }
+//            if (contextMap!=null){
+//                contextMap.removeIpChannelContext(ip);
+//            }
+//        }
+//    }
 
     /**
      * 移除房间下所有channel上下文
@@ -290,7 +312,7 @@ public class RoomChannelMap {
         if (roomMap.containsKey(roomId)) {
             channelMap = roomMap.get(roomId);
         }
-        if (channelMap != null) {
+        if (channelMap != null && channelMap.size()>0) {
             for (String key : channelMap.keySet()) {
                 try {
                     contextMap = channelMap.get(key);
@@ -312,7 +334,7 @@ public class RoomChannelMap {
             Map<String, ChannelContextMap> contextMap = null;
             for (String key : roomMap.keySet()) {
                 contextMap = roomMap.get(key);
-                if (contextMap != null) {
+                if (contextMap != null && contextMap.size()>0) {
                     Iterator<Map.Entry<String, ChannelContextMap>> it = contextMap.entrySet().iterator();
                     while (it.hasNext()) {
                         try {
@@ -333,27 +355,47 @@ public class RoomChannelMap {
     /**
      * 移除所有channel上下文
      */
-    public void removeUserAllContext(Long userId) {
-        String zone = randomZone(null, userId == null ? null : userId + "");
-        if (roomMap != null && roomMap.size() > 0) {
-            Map<String, ChannelContextMap> contextMap = null;
-            for (String key : roomMap.keySet()) {
-                try {
-                    contextMap = roomMap.get(key);
-                    if (contextMap != null) {
-                        if (contextMap.containsKey(zone)) {
-                            ChannelContextMap channelContextMap = contextMap.get(zone);
-                            if (channelContextMap != null) {
-                                channelContextMap.removeUserIdChannelContext(userId);
-                            }
-                        }
-                    }
-                } catch (Exception e) {
-                    logger.error("removeUserAllContext异常", e);
-                }
-            }
-        }
-    }
+//    public void removeUserAllContext(Long userId) {
+//        String zone = randomZone(null, userId == null ? null : userId + "");
+//        if (roomMap != null && roomMap.size() > 0) {
+//            Map<String, ChannelContextMap> contextMap = null;
+//            for (String key : roomMap.keySet()) {
+//                try {
+//                    contextMap = roomMap.get(key);
+//                    if (contextMap != null && contextMap.size()>0) {
+//                        if (contextMap.containsKey(zone)) {
+//                            ChannelContextMap channelContextMap = contextMap.get(zone);
+//                            if (channelContextMap != null) {
+//                                channelContextMap.removeUserIdChannelContext(userId);
+//                            }
+//                        }
+//                    }
+//                } catch (Exception e) {
+//                    logger.error("removeUserAllContext异常", e);
+//                }
+//            }
+//        }
+//    }
+
+    /**
+     * 移除房间下的用户channel
+     * @param roomId
+     * @param userId
+     */
+//    public void removeRoomUserContext(String roomId,Long userId){
+//        String zone = randomZone(null, userId == null ? null : userId + "");
+//        if (roomMap != null && roomMap.size() > 0){
+//            Map<String,ChannelContextMap> contextMap = roomMap.get(roomId);
+//            if (contextMap!=null && contextMap.size()>0){
+//                if (contextMap.containsKey(zone)){
+//                    ChannelContextMap channelContextMap = contextMap.get(zone);
+//                    if (channelContextMap != null) {
+//                        channelContextMap.removeUserIdChannelContext(userId);
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     /**
      * 清理channel上下文
@@ -364,7 +406,7 @@ public class RoomChannelMap {
             for (String key : roomMap.keySet()) {
                 try {
                     contextMap = roomMap.get(key);
-                    if (contextMap != null) {
+                    if (contextMap != null && contextMap.size()>0) {
                         Iterator<Map.Entry<String, ChannelContextMap>> it = contextMap.entrySet().iterator();
                         while (it.hasNext()) {
                             try {
@@ -442,7 +484,14 @@ public class RoomChannelMap {
         return onlineCount;
     }
 
-    public ChannelContext getAndRemoveSingleChannelContext(String roomId, String zoneKey, String contextKey) {
+    /**
+     * 移除单个channel
+     * @param roomId
+     * @param zoneKey
+     * @param contextKey
+     * @return
+     */
+    public ChannelContext getAndRemoveSingleChannelContext(String roomId, String zoneKey, String contextKey,String contextId) {
         Map<String, ChannelContextMap> channelMap = null;
         ChannelContextMap contextMap = null;
         if (roomMap.containsKey(roomId)) {
@@ -454,7 +503,7 @@ public class RoomChannelMap {
             }
         }
         if (contextMap != null) {
-            return contextMap.getAndRemoveSingleChannelContext(contextKey);
+            return contextMap.getAndRemoveSingleChannelContext(contextKey,contextId);
         }
         return null;
     }
