@@ -13,6 +13,7 @@
     <module>chat-web</module>
     <module>chat-console</module>
     <module>chat-server</module>
+    <module>chat-udp</module>
   </modules>
 
   <name>netty-chat</name>
