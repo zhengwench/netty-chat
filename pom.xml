@@ -20,7 +20,7 @@
 
   <properties>
     <spring.version>5.1.2.RELEASE</spring.version>
-    <netty.version>4.1.31.Final</netty.version>
+    <netty.version>4.1.42.Final</netty.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <springboot.version>2.0.7.RELEASE</springboot.version>
     <bootplugin.version>2.0.7.RELEASE</bootplugin.version>
